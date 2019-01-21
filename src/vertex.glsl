@@ -1,8 +1,13 @@
 #version 300 es
-in vec2 a_position;
+in vec3 a_position;
 
-uniform mat3 u_matrix;
+uniform float uPointSize;
+uniform float uAngle;
 
 void main() {
-    gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
+    gl_PointSize = uPointSize;
+    gl_Position = vec4(cos(uAngle) * 0.8 + a_position.x,
+                       sin(uAngle) * 0.8 + a_position.y,
+                       a_position.z,
+                       1.0);
 }
