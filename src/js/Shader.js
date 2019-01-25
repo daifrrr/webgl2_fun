@@ -1,7 +1,6 @@
 import ShaderUtil from './shaderUtil';
-import modal from './Modal';
 
-class Shader {
+export default class Shader {
 
     constructor(gl, vertShaderSrc, fragShaderSrc) {
         this.program = ShaderUtil.getShaderProgram(gl, vertShaderSrc, fragShaderSrc);
@@ -35,10 +34,10 @@ class Shader {
 
     renderModal(modal) {
         this.gl.bindVertexArray(modal.mesh.vao);
-        if(model.mesh.indexCount) {
-            this.gl.drawElements(model.mesh.drawMode, modal.mesh.indexLength, gl.UNSIGNED_SHORT, 0);
+        if(modal.mesh.indexCount) {
+            this.gl.drawElements(modal.mesh.drawMode, modal.mesh.indexLength, this.gl.UNSIGNED_SHORT, 0);
         } else {
-            this.gl.drawArrays(modal.mesh.drawMode, 0, model.mesh.vertexCount);
+            this.gl.drawArrays(modal.mesh.drawMode, 0, modal.mesh.vertexCount);
         }
         this.gl.bindVertexArray(null);
 

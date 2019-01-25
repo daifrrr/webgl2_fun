@@ -1,4 +1,4 @@
-export default class Modal{
+export default class Modal {
 	constructor(meshData){
 		//TODO :: create this.transform in future lesson
 		this.mesh = meshData;

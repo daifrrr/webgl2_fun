@@ -4,7 +4,7 @@ import fSHADER from '../shaders/fragment.glsl';
 import GLInstance from './gl';
 import sh from './shaderUtil';
 import RenderLoop from './renderLoop';
-import cfg from '../config/config';
+import Shader from './Shader';
 
 var gl,
     gVerticesCount = 0,
@@ -52,4 +52,8 @@ function onRender(dt) {
 
     gl.fClear();
     gl.drawArrays(gl.POINTS, 0, gVerticesCount);
+}
+
+class TestShader extends Shader {
+
 }
