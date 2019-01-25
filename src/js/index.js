@@ -26,7 +26,7 @@ window.addEventListener('load', function () {
 
     gModal = new Modal(mesh);
 
-    gRLoop = new RenderLoop(onRender, 10).start();
+    gRLoop = new RenderLoop(onRender, 60).start();
 });
 
 function onRender(dt) {

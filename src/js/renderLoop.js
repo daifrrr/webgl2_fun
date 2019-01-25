@@ -4,9 +4,9 @@ export default class RenderLoop {
         this.msLastFrame = null;
         this.callBack = callback;
         this.isActive = false;
-        this.fps = 0;
+        this.fps = fps;
 
-        if (!fps && fps > 0) {
+        if (!this.fps && this.fps > 0) {
             this.msFpsLimit = 1000 / fps;
             this.run = function () {
                 let msCurrent = performance.now(),
