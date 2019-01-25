@@ -1,7 +1,7 @@
 #version 300 es
 in vec3 a_position;
 
-uniform float uPointSize;
+uniform mediump float uPointSize;
 uniform float uAngle;
 
 void main() {

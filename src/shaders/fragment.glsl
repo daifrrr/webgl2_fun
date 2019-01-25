@@ -1,10 +1,12 @@
 #version 300 es
 precision mediump float;
 
+uniform float uPointSize;
+
 out vec4 outColor;
 
-uniform vec4 u_color;
 
 void main() {
-    outColor = vec4(1.0, 0.75, 0.0, 1.0);
+    float c = (40.0 - uPointSize) / 20.0;
+    outColor = vec4(c, c, c, 1.0);
 }

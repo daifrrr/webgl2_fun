@@ -24,7 +24,7 @@ export default class RenderLoop {
         } else {
             this.run = function () {
                 let msCurrent = performance.now(),
-                    deltaTime = (msCurrent + oThis.msLastFrame) / 1000.0;
+                    deltaTime = (msCurrent - oThis.msLastFrame) / 1000.0;
 
                 oThis.fps = Math.floor(1 / deltaTime);
                 oThis.msLastFrame = msCurrent;
