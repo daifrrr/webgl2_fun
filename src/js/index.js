@@ -1,8 +1,10 @@
-import vSHADER from './vertex.glsl';
-import fSHADER from './fragment.glsl';
+import '../css/style.css';
+import vSHADER from '../shaders/vertex.glsl';
+import fSHADER from '../shaders/fragment.glsl';
 import GLInstance from './gl';
 import sh from './shaderUtil';
 import RenderLoop from './renderLoop';
+import cfg from '../config/config';
 
 var gl,
     gVerticesCount = 0,
@@ -14,7 +16,6 @@ window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fSetSize(500, 500).fClear();
 
     let program = sh.getShaderProgram(gl, vSHADER, fSHADER);
-
     gl.useProgram(program);
     let aPositionLoc = gl.getAttribLocation(program, "a_position");
     uAngle = gl.getUniformLocation(program, "uAngle");
