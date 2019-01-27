@@ -6,6 +6,7 @@ import RenderLoop from './RenderLoop';
 import Shader from './Shader';
 import Modal from './Modal';
 import Primitives from './Primitives';
+import * as glm from 'gl-matrix';
 
 let gl,
     gRLoop,
@@ -14,6 +15,11 @@ let gl,
 
 window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fSetSize(500, 500).fClear();
+
+    let my_vec3 = glm.vec3.fromValues(1, 2, 3);
+    glm.vec3.add(my_vec3, glm.vec3.fromValues(1, 2, 3), glm.vec3.fromValues(1, 2, 3));
+
+    console.log(my_vec3);
 
     gShader = new TestShader(gl, [0,0,1, 0,0,0, 0,1,0, 1,1,1]);
 
