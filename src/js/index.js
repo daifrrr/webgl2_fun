@@ -15,7 +15,7 @@ let gl,
 window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fSetSize(500, 500).fClear();
 
-    gShader = new TestShader(gl, [0.8, 0.8, 0.8, 1,0,0,  0,1,0, 0,0,1]);
+    gShader = new TestShader(gl, [0,0,1, 0,0,0, 0,1,0, 1,1,1]);
 
     // let mesh = gl.fCreateMeshVAO("lines", null, [-1,0,0,1,0,0,  0,-1,0,0,1,0]);
     // mesh.drawMode = gl.LINES;
@@ -35,6 +35,7 @@ class TestShader extends Shader {
         super(gl, vSHADER, fSHADER);
 
         let uColor = gl.getUniformLocation(this.program, "uColor");
+
         gl.uniform3fv(uColor, aryColor);
         gl.useProgram(null);
     }
