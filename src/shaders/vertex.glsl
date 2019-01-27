@@ -1,13 +1,12 @@
 #version 300 es
 in vec3 a_position;
+layout(location=4) in float a_color;
 
-uniform mediump float uPointSize;
-uniform float uAngle;
+uniform vec3 uColor[4];
+
+out lowp vec4 color;
 
 void main() {
-    gl_PointSize = uPointSize;
-    gl_Position = vec4(cos(uAngle) * 0.8 + a_position.x,
-                       sin(uAngle) * 0.8 + a_position.y,
-                       a_position.z,
-                       1.0);
+    color = vec4(uColor[int(a_color)], 1.0);
+    gl_Position = vec4(a_position, 1.0);
 }

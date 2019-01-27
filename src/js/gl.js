@@ -9,7 +9,7 @@ export default function GLInstance(canvasID) {
 
     gl.mMeshCache = [];
 
-    gl.clearColor(0.0,0.0, 0.0, 1.0);
+    gl.clearColor(1.0,1.0, 1.0, 1.0);
 
     gl.fClear = function() {
         this.clear(this.COLOR_BUFFER_BIT | this.DEPTH_BUFFER_BIT);
