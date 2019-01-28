@@ -1,14 +1,6 @@
 import cfg from '../config/config';
 
 export default class shaderUtil {
-    static domShaderSrc(elemID) {
-        let elm = document.getElementById(elemID);
-        if (!elm || elm.text === "") {
-            console.log(elemID + " shader not found or no text.");
-            return null;
-        }
-        return elm.text;
-    }
 
     static createShader(gl, source, type) {
         let shader = gl.createShader(type);
@@ -26,6 +18,13 @@ export default class shaderUtil {
         gl.attachShader(program, vertexShader);
         gl.attachShader(program, fragmentShader);
         gl.linkProgram(program);
+
+        gl.bindAttribLocation(program, cfg.ATTR_POSITION_LOC, cfg.ATTR_POSITION_NAME);
+        gl.bindAttribLocation(program, cfg.ATTR_NORMAL_LOC, cfg.ATTR_NORMAL_NAME);
+        gl.bindAttribLocation(program, cfg.ATTR_UV_LOC, cfg.ATTR_UV_NAME);
+
+
+
         if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             console.error('Error creating shader program', gl.getProgramInfoLog(program));
             gl.deleteProgram(program);
@@ -52,7 +51,7 @@ export default class shaderUtil {
     static getShaderProgram(gl, vertID, fragID) {
         let vShader = this.createShader(gl, vertID, gl.VERTEX_SHADER);
         let fShader = this.createShader(gl, fragID, gl.FRAGMENT_SHADER);
-        return this.createProgram(gl, vShader, fShader);
+        return this.createProgram(gl, vShader, fShader, true);
     }
 
     static getStandardAttribLocations(gl,program){
@@ -60,6 +59,14 @@ export default class shaderUtil {
             position:	gl.getAttribLocation(program,cfg.ATTR_POSITION_NAME),
             norm:		gl.getAttribLocation(program,cfg.ATTR_NORMAL_NAME),
             uv:			gl.getAttribLocation(program,cfg.ATTR_UV_NAME)
+        };
+    }
+    static getStandardUniformLocations(gl,program){
+        return {
+            perspective:	gl.getUniformLocation(program,"uPMatrix"),
+            modalMatrix:	gl.getUniformLocation(program,"uMVMatrix"),
+            cameraMatrix:	gl.getUniformLocation(program,"uCameraMatrix"),
+            mainTexture:	gl.getUniformLocation(program,"uMainTex")
         };
     }
 }

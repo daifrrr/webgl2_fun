@@ -1,7 +1,7 @@
 import {vec3, vec4, mat3, mat4} from "gl-matrix";
 import {toRadian} from "gl-matrix/esm/common";
 
-export class Transform {
+export default class Transform {
 
     constructor() {
         this.position = vec3.fromValues(0, 0, 0);
@@ -17,25 +17,26 @@ export class Transform {
 
     updateMatrix() {
         let matrix = mat4.create();
-            mat4.fromTranslation(matrix, this.position).
-            mat4.fromXRotation(matrix, toRadian(this.rotation.x)).
-            mat4.fromYRotation(matrix, toRadian(this.rotation.y)).
-            mat4.fromZRotation(matrix, toRadian(this.rotation.z)).
-            mat4.scale(matrix, matrix, this.scale);
+        mat4.translate(matrix, matrix, this.position);
+        console.log(matrix);
+        mat4.fromXRotation(matrix, toRadian(this.rotation.x));
+        mat4.fromYRotation(matrix, toRadian(this.rotation.y));
+        mat4.fromZRotation(matrix, toRadian(this.rotation.z));
+        mat4.scale(matrix, matrix, this.scale);
 
         mat3.normalFromMat4(this.matNormal, this.matView);
 
-        vec4.transformMat4(this.forward, vec4.fromValues(0,0,1,0), mat4.create());
-        vec4.transformMat4(this.up, vec4.fromValues(0,1,1,0), mat4.create());
-        vec4.transformMat4(this.right, vec4.fromValues(1,0,0,0), mat4.create());
+        vec4.transformMat4(this.forward, vec4.fromValues(0, 0, 1, 0), mat4.create());
+        vec4.transformMat4(this.up, vec4.fromValues(0, 1, 1, 0), mat4.create());
+        vec4.transformMat4(this.right, vec4.fromValues(1, 0, 0, 0), mat4.create());
 
-        return mat4.identity(this.matView);
+        return matrix;
     }
 
     updateDirection() {
-        vec4.transformMat4(this.forward, vec4.fromValues(0,0,1,0), mat4.create());
-        vec4.transformMat4(this.up, vec4.fromValues(0,1,1,0), mat4.create());
-        vec4.transformMat4(this.right, vec4.fromValues(1,0,0,0), mat4.create());
+        vec4.transformMat4(this.forward, vec4.fromValues(0, 0, 1, 0), mat4.create());
+        vec4.transformMat4(this.up, vec4.fromValues(0, 1, 1, 0), mat4.create());
+        vec4.transformMat4(this.right, vec4.fromValues(1, 0, 0, 0), mat4.create());
         return this;
     }
 
@@ -48,8 +49,8 @@ export class Transform {
     }
 
     reset() {
-        this.position.set(0,0,0);
-        this.scale.set(1,1,1);
-        this.rotation.set(0,0,0);
+        this.position.set(0, 0, 0);
+        this.scale.set(1, 1, 1);
+        this.rotation.set(0, 0, 0);
     }
 }

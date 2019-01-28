@@ -16,20 +16,30 @@ let gl,
 window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fSetSize(500, 500).fClear();
 
-    gShader = new TestShader(gl, [ 0.8,0.8,0.8,  1,0,0,  0,1,0,  0,0,1 ]);
+    gShader = new TestShader(gl, [0.8, 0.8, 0.8, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
 
 
-    // let mesh = gl.fCreateMeshVAO("lines", null, [-1,0,0,1,0,0,  0,-1,0,0,1,0]);
-    // mesh.drawMode = gl.LINES;
-    // gModal = new Modal(Primitives.GridAxis.createMesh(gl));
+    gModal = new Modal(Primitives.GridAxis.createMesh(gl))
+        .setScale(0.4, 0.4, 0.4)
+        .setRotation(0, 0, 45)
+        .setPosition(0.8, 0.8, 0);
 
     gRLoop = new RenderLoop(onRender).start();
 });
 
 function onRender(dt) {
     gl.fClear();
-    gShader.activate()
-        .renderModal(gModal);
+
+    let p = gModal.transform.position,
+        angle = Math.atan2(p.y, p.x) + (1 * dt),
+        radius = Math.sqrt(p.x * p.x + p.y * p.y),
+        scale = Math.max(0.2, Math.abs(Math.sin(angle)) * 1.2);
+    gShader.activate().renderModal(
+        gModal.setScale(scale, scale / 4, 1)
+            .addPosition(radius * Math.cos(angle), radius * Math.sin(angle), 0)
+            .addRotation(30 * dt, 60 * dt, 15 * dt)
+            .preRender()
+    );
 }
 
 class TestShader extends Shader {

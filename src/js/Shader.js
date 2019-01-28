@@ -9,7 +9,7 @@ export default class Shader {
             this.gl = gl;
             gl.useProgram(this.program);
             this.attribLoc = ShaderUtil.getStandardAttribLocations(gl,this.program);
-            this.uniformLoc = {};
+            this.uniformLoc = ShaderUtil.getStandardUniformLocations(gl, this.program);
         }
     }
 
@@ -23,6 +23,10 @@ export default class Shader {
         return this;
     }
 
+    setPerspective(matData){	this.gl.uniformMatrix4fv(this.uniformLoc.perspective, false, matData); return this; }
+    setModalMatrix(matData){	this.gl.uniformMatrix4fv(this.uniformLoc.modalMatrix, false, matData); return this; }
+    setCameraMatrix(matData){	this.gl.uniformMatrix4fv(this.uniformLoc.cameraMatrix, false, matData); return this; }
+
     dispose() {
         if(this.gl.getParameter(this.gl.CURRENT_PROGRAM) === this.program) {
             this.gl.useProgram(null);
@@ -33,6 +37,7 @@ export default class Shader {
     preRender(){}
 
     renderModal(modal) {
+        this.setModalMatrix(modal.transform.getViewMatrix());
         this.gl.bindVertexArray(modal.mesh.vao);
         if(modal.mesh.indexCount) {
             this.gl.drawElements(modal.mesh.drawMode, modal.mesh.indexLength, this.gl.UNSIGNED_SHORT, 0);
