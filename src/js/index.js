@@ -16,16 +16,12 @@ let gl,
 window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fSetSize(500, 500).fClear();
 
-    let my_vec3 = glm.vec3.fromValues(1, 2, 3);
-    glm.vec3.add(my_vec3, glm.vec3.fromValues(1, 2, 3), glm.vec3.fromValues(1, 2, 3));
+    gShader = new TestShader(gl, [ 0.8,0.8,0.8,  1,0,0,  0,1,0,  0,0,1 ]);
 
-    console.log(my_vec3);
-
-    gShader = new TestShader(gl, [0,0,1, 0,0,0, 0,1,0, 1,1,1]);
 
     // let mesh = gl.fCreateMeshVAO("lines", null, [-1,0,0,1,0,0,  0,-1,0,0,1,0]);
     // mesh.drawMode = gl.LINES;
-    gModal = new Modal(Primitives.GridAxis.createMesh(gl));
+    // gModal = new Modal(Primitives.GridAxis.createMesh(gl));
 
     gRLoop = new RenderLoop(onRender).start();
 });

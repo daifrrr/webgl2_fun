@@ -1,29 +1,55 @@
-import {vec3, mat3, mat4} from "gl-matrix";
+import {vec3, vec4, mat3, mat4} from "gl-matrix";
 import {toRadian} from "gl-matrix/esm/common";
-import {normalFromMat4} from "gl-matrix/esm/mat3";
 
-class Transform {
+export class Transform {
 
     constructor() {
-        this.position = vec3.fromValues(0,0,0);
-        this.scale = vec3.fromValues(1,1,1);
+        this.position = vec3.fromValues(0, 0, 0);
+        this.scale = vec3.fromValues(1, 1, 1);
         this.rotation = vec3.fromValues(0, 0, 0);
         this.matView = mat4.create();
         this.matNormal = mat3.create();
 
-        this.forward = new Float32Array(4);
-        this.up = new Float32Array(4);
-        this.right = new Float32Array(4);
+        this.forward = vec4.create();
+        this.up = vec4.create();
+        this.right = vec4.create();
     }
 
     updateMatrix() {
-        let matrix = this.matView().reset();
-            matrix.fromTranslation(matrix, this.position);
-            matrix.fromXRotation(matrix, toRadian(this.rotation.x));
-            matrix.rotateY(this.rotation.y);
-            matrix.rotateZ(this.rotation.z);
-            matrix.scale(this.scale);
+        let matrix = mat4.create();
+            mat4.fromTranslation(matrix, this.position).
+            mat4.fromXRotation(matrix, toRadian(this.rotation.x)).
+            mat4.fromYRotation(matrix, toRadian(this.rotation.y)).
+            mat4.fromZRotation(matrix, toRadian(this.rotation.z)).
+            mat4.scale(matrix, matrix, this.scale);
 
-        normalFromMat4(this.matNormal, this.matView);
+        mat3.normalFromMat4(this.matNormal, this.matView);
+
+        vec4.transformMat4(this.forward, vec4.fromValues(0,0,1,0), mat4.create());
+        vec4.transformMat4(this.up, vec4.fromValues(0,1,1,0), mat4.create());
+        vec4.transformMat4(this.right, vec4.fromValues(1,0,0,0), mat4.create());
+
+        return mat4.identity(this.matView);
+    }
+
+    updateDirection() {
+        vec4.transformMat4(this.forward, vec4.fromValues(0,0,1,0), mat4.create());
+        vec4.transformMat4(this.up, vec4.fromValues(0,1,1,0), mat4.create());
+        vec4.transformMat4(this.right, vec4.fromValues(1,0,0,0), mat4.create());
+        return this;
+    }
+
+    getViewMatrix() {
+        return mat4.identity(this.matView);
+    }
+
+    getNormalMatrix() {
+        return this.matNormal;
+    }
+
+    reset() {
+        this.position.set(0,0,0);
+        this.scale.set(1,1,1);
+        this.rotation.set(0,0,0);
     }
 }
