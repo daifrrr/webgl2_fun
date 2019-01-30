@@ -4,8 +4,8 @@ export default class Transform {
 
     constructor() {
         this.position = new Vector3(0, 0, 0);
-        this.rotation = new Vector3(1, 1, 1);
-        this.scale = new Vector3(0, 0, 0);
+        this.rotation = new Vector3(0, 0, 0);
+        this.scale = new Vector3(1, 1, 1);
         this.matView = new Matrix4();
         this.matNormal = new Float32Array(9);
 

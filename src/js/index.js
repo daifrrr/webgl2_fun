@@ -6,50 +6,47 @@ import RenderLoop from './RenderLoop';
 import Shader from './Shader';
 import Modal from './Modal';
 import Primitives from './Primitives';
-import * as glm from 'gl-matrix';
+import Camera from './Camera';
+import CameraController from './CameraController';
 
 let gl,
     gRLoop,
     gModal,
     gShader;
+let gCamera,
+    gCameraControl;
+
 
 window.addEventListener('load', function () {
-    gl = GLInstance('glCanvas').fSetSize(500, 500).fClear();
+    gl = GLInstance('glCanvas').fFitScreen(0.95, 0.9).fClear();
 
-    gShader = new TestShader(gl, [0.8, 0.8, 0.8,
-        1, 0, 0,
-        0, 1, 0,
-        0, 0, 1]);
+    gCamera = new Camera(gl);
+    gCamera.transform.position.set(0,1,3);
+    gCameraControl = new CameraController(gl, gCamera);
+
+    gShader = new TestShader(gl, [0.8, 0.8, 0.8, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
+
+    gShader.activate().setPerspective(gCamera.projectionMatrix).deactivate();
 
 
-    gModal = new Modal(Primitives.GridAxis.createMesh(gl))
-        .setScale(0.4, 0.4, 0.4)
-        .setRotation(0, 0, 45)
-        .setPosition(0.8, 0.8, 0);
-    console.log(gModal);
+    gModal = new Modal(Primitives.GridAxis.createMesh(gl, true));
     gRLoop = new RenderLoop(onRender).start();
 });
 
 function onRender(dt) {
+    gCamera.updateViewMatrix();
     gl.fClear();
-    console.log(dt);
-    let p = gModal.transform.position,
-        angle = Math.atan2(p.y, p.x) + (1 * dt),
-        radius = Math.sqrt(p.x * p.x + p.y * p.y),
-        scale = Math.max(0.2, Math.abs(Math.sin(angle)) * 1.2);
-    gShader.activate().renderModal(
-        gModal.setScale(scale, scale / 4, 1)
-            .setPosition(radius * Math.cos(angle), radius * Math.sin(angle), 0)
-            .addRotation(30 * dt, 60 * dt, 15 * dt)
-            .preRender()
-    );
+
+    gShader.activate()
+        .setCameraMatrix(gCamera.viewMatrix)
+        .renderModal( gModal.preRender() );
 }
 
 class TestShader extends Shader {
     constructor(gl, aryColor) {
         super(gl, vSHADER, fSHADER);
 
-        let uColor = gl.getUniformLocation(this.program, "uColor");
+        let uColor = gl.getUniformLocation(this.program, 'uColor');
 
         gl.uniform3fv(uColor, aryColor);
         gl.useProgram(null);
