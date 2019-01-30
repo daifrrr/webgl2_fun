@@ -36,25 +36,25 @@ Primitives.GridAxis = class {
             verts.push(1);
         }
 
-        // verts.push(-half);	//x1
-        // verts.push(-half);	//y1
-        // verts.push(0);		//z1
-        // verts.push(2);		//c2
-        //
-        // verts.push(half);	//x2
-        // verts.push(half);	//y2
-        // verts.push(0);		//z2
-        // verts.push(2);		//c2
-        //
-        // verts.push(-half);	//x1
-        // verts.push(half);	//y1
-        // verts.push(0);		//z1
-        // verts.push(3);		//c2
-        //
-        // verts.push(half);	//x2
-        // verts.push(-half);	//y2
-        // verts.push(0);		//z2
-        // verts.push(3);		//c2
+        verts.push(-half);	//x1
+        verts.push(-half);	//y1
+        verts.push(0);		//z1
+        verts.push(2);		//c2
+
+        verts.push(half);	//x2
+        verts.push(half);	//y2
+        verts.push(0);		//z2
+        verts.push(2);		//c2
+
+        verts.push(-half);	//x1
+        verts.push(half);	//y1
+        verts.push(0);		//z1
+        verts.push(3);		//c2
+
+        verts.push(half);	//x2
+        verts.push(-half);	//y2
+        verts.push(0);		//z2
+        verts.push(3);		//c2
 
 
 

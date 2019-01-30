@@ -1,47 +1,45 @@
-import {vec3, vec4, mat3, mat4} from "gl-matrix";
-import {toRadian} from "gl-matrix/esm/common";
+import {Vector3, Matrix4} from "./Utils/Math";
 
 export default class Transform {
 
     constructor() {
-        this.position = vec3.fromValues(0, 0, 0);
-        this.scale = vec3.fromValues(1, 1, 1);
-        this.rotation = vec3.fromValues(0, 0, 0);
-        this.matView = mat4.create();
-        this.matNormal = mat3.create();
+        this.position = new Vector3(0, 0, 0);
+        this.rotation = new Vector3(1, 1, 1);
+        this.scale = new Vector3(0, 0, 0);
+        this.matView = new Matrix4();
+        this.matNormal = new Float32Array(9);
 
-        this.forward = vec4.create();
-        this.up = vec4.create();
-        this.right = vec4.create();
+        this.forward = new Float32Array(4);
+        this.up = new Float32Array(4);
+        this.right = new Float32Array(4);
     }
 
     updateMatrix() {
-        let matrix = mat4.create();
-        mat4.translate(matrix, matrix, this.position);
-        console.log(matrix);
-        mat4.fromXRotation(matrix, toRadian(this.rotation.x));
-        mat4.fromYRotation(matrix, toRadian(this.rotation.y));
-        mat4.fromZRotation(matrix, toRadian(this.rotation.z));
-        mat4.scale(matrix, matrix, this.scale);
+        this.matView.reset()
+            .vtranslate(this.position)
+            .vrotateX(this.rotation.x * Transform.deg2Rad)
+            .vrotateZ(this.rotation.z * Transform.deg2Rad)
+            .vrotateY(this.rotation.y * Transform.deg2Rad)
+            .vscale(this.scale);
 
-        mat3.normalFromMat4(this.matNormal, this.matView);
+        Matrix4.normalMat3(this.matNormal, this.matView);
 
-        vec4.transformMat4(this.forward, vec4.fromValues(0, 0, 1, 0), mat4.create());
-        vec4.transformMat4(this.up, vec4.fromValues(0, 1, 1, 0), mat4.create());
-        vec4.transformMat4(this.right, vec4.fromValues(1, 0, 0, 0), mat4.create());
+        Matrix4.transformVec4(this.forward, [0, 0, 1, 0], this.matView.raw);
+        Matrix4.transformVec4(this.up, [0, 1, 0, 0], this.matView.raw);
+        Matrix4.transformVec4(this.right, [1, 0, 0, 0], this.matView.raw);
 
-        return matrix;
+        return this.matView.raw;
     }
 
     updateDirection() {
-        vec4.transformMat4(this.forward, vec4.fromValues(0, 0, 1, 0), mat4.create());
-        vec4.transformMat4(this.up, vec4.fromValues(0, 1, 1, 0), mat4.create());
-        vec4.transformMat4(this.right, vec4.fromValues(1, 0, 0, 0), mat4.create());
+        Matrix4.transformVec4(this.forward, [0, 0, 1, 0], this.matView.raw);
+        Matrix4.transformVec4(this.up, [0, 1, 0, 0], this.matView.raw);
+        Matrix4.transformVec4(this.right, [1, 0, 0, 0], this.matView.raw);
         return this;
     }
 
     getViewMatrix() {
-        return mat4.identity(this.matView);
+        return this.matView.raw;
     }
 
     getNormalMatrix() {
@@ -54,3 +52,5 @@ export default class Transform {
         this.rotation.set(0, 0, 0);
     }
 }
+
+Transform.deg2Rad = Math.PI/180;
