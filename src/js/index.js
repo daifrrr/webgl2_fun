@@ -6,45 +6,47 @@ import RenderLoop from './RenderLoop';
 import Shader from './Shader';
 import Modal from './Modal';
 import Primitives from './Primitives';
-import {Camera, CameraController} from "./Camera";
+import Camera from './Camera';
+import CameraController from './CameraController';
 
 let gl,
     gRLoop,
     gModal,
-    gShader,
-    gCamera,
+    gShader;
+let gCamera,
     gCameraControl;
 
+
 window.addEventListener('load', function () {
-    gl = GLInstance('glCanvas').fSetSize(500, 500).fClear();
+    gl = GLInstance('glCanvas').fFitScreen(0.95, 0.9).fClear();
 
     gCamera = new Camera(gl);
     gCamera.transform.position.set(0,1,3);
     gCameraControl = new CameraController(gl, gCamera);
 
+    gShader = new TestShader(gl, [0.8, 0.8, 0.8, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
 
-    gShader = new TestShader(gl, [0.8, 0.8, 0.8,  1, 0, 0,  0, 1, 0,  0, 0, 1]);
     gShader.activate().setPerspective(gCamera.projectionMatrix).deactivate();
 
-    gModal = new Modal(Primitives.GridAxis.createMesh(gl))
-        .setScale(2, 2, 0)
-        .setPosition(0,0,-1);
+
+    gModal = new Modal(Primitives.GridAxis.createMesh(gl, true));
     gRLoop = new RenderLoop(onRender).start();
 });
 
 function onRender(dt) {
     gCamera.updateViewMatrix();
     gl.fClear();
+
     gShader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
-        .renderModal(gModal.preRender());
+        .renderModal( gModal.preRender() );
 }
 
 class TestShader extends Shader {
     constructor(gl, aryColor) {
         super(gl, vSHADER, fSHADER);
 
-        let uColor = gl.getUniformLocation(this.program, "uColor");
+        let uColor = gl.getUniformLocation(this.program, 'uColor');
 
         gl.uniform3fv(uColor, aryColor);
         gl.useProgram(null);

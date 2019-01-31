@@ -1,25 +1,20 @@
-import {Matrix4} from './Utils/Math';
-import Transform from './Transform';
+import {Matrix4} from "./Utils/Math";
+import Transform from "./Transform";
 
-export {
-    Camera,
-    CameraController,
-}
-
-class Camera {
+export default class Camera {
     constructor(gl, fov, near, far) {
+        //Setup the perspective matrix
         this.projectionMatrix = new Float32Array(16);
         let ratio = gl.canvas.width / gl.canvas.height;
-        Matrix4.perspective(this.projectionMatrix, ratio, fov || 45, near || 0.1, far || 100.0);
+        Matrix4.perspective(this.projectionMatrix, fov || 45, ratio, near || 0.1, far || 100.0);
+        this.transform = new Transform();		//Setup transform to control the position of the camera
+        this.viewMatrix = new Float32Array(16);	//Cache the matrix that will hold the inverse of the transform.
 
-        this.transform = new Transform();
-        this.viewMatrix = new Float32Array(16);
-
-        this.mode = Camera.MODE_ORBIT;
+        this.mode = Camera.MODE_ORBIT;			//Set what sort of control mode to use.
     }
 
     panX(v) {
-        if (this.mode === Camera.MODE_ORBIT) return;
+        if (this.mode === Camera.MODE_ORBIT) return; // Panning on the X Axis is only allowed when in free mode
         this.updateViewMatrix();
         this.transform.position.x += this.transform.right[0] * v;
         this.transform.position.y += this.transform.right[1] * v;
@@ -28,119 +23,48 @@ class Camera {
 
     panY(v) {
         this.updateViewMatrix();
-        this.transform.position.y += this.transform.right[1] * v;
-        if (this.mode === Camera.MODE_ORBIT) return;
-        this.transform.position.x += this.transform.right[0] * v;
-        this.transform.position.z += this.transform.right[2] * v;
+        this.transform.position.y += this.transform.up[1] * v;
+        if (this.mode === Camera.MODE_ORBIT) return; //Can only move up and down the y axix in orbit mode
+        this.transform.position.x += this.transform.up[0] * v;
+        this.transform.position.z += this.transform.up[2] * v;
     }
 
     panZ(v) {
         this.updateViewMatrix();
         if (this.mode === Camera.MODE_ORBIT) {
-            this.transform.position.z += this.transform.right[2] * v;
+            this.transform.position.z += v; //orbit mode does translate after rotate, so only need to set Z, the rotate will handle the rest.
         } else {
-            this.transform.position.x += this.transform.right[0] * v;
-            this.transform.position.y += this.transform.right[1] * v;
-            this.transform.position.z += this.transform.right[2] * v;
+            //in freemode to move forward, we need to move based on our forward which is relative to our current rotation
+            this.transform.position.x += this.transform.forward[0] * v;
+            this.transform.position.y += this.transform.forward[1] * v;
+            this.transform.position.z += this.transform.forward[2] * v;
         }
     }
 
+    //To have different modes of movements, this function handles the view matrix update for the transform object.
     updateViewMatrix() {
+        //Optimize camera transform update, no need for scale nor rotateZ
         if (this.mode === Camera.MODE_FREE) {
             this.transform.matView.reset()
                 .vtranslate(this.transform.position)
                 .vrotateX(this.transform.rotation.x * Transform.deg2Rad)
                 .vrotateY(this.transform.rotation.y * Transform.deg2Rad);
+
         } else {
             this.transform.matView.reset()
                 .vrotateX(this.transform.rotation.x * Transform.deg2Rad)
                 .vrotateY(this.transform.rotation.y * Transform.deg2Rad)
                 .vtranslate(this.transform.position);
+
         }
 
         this.transform.updateDirection();
 
+        //Cameras work by doing the inverse transformation on all meshes, the camera itself is a lie :)
         Matrix4.invert(this.viewMatrix, this.transform.matView.raw);
         return this.viewMatrix;
     }
 }
 
-Camera.MODE_FREE = 0;
-Camera.MODE_ORBIT = 1;
-
-class CameraController {
-    constructor(gl, camera) {
-        let oThis = this;
-        let box = gl.canvas.getBoundingClientRect();
-        this.canvas = gl.canvas;
-        this.camera = camera;
-
-        this.rotateRate = -300;
-        this.panRate = 5;
-        this.zoomRate = 200;
-
-        this.offsetX = box.left;
-        this.offsetY = box.top;
-
-        this.initX = 0;
-        this.initY = 0;
-        this.prevX = 0;
-        this.prevY = 0;
-
-        this.onUpHandler = function (e) {
-            oThis.onMouseUp(e);
-        };
-        this.onMoveHandler = function (e) {
-            oThis.onMouseMove(e);
-        };
-
-        this.canvas.addEventListener('mousedown', function (e) {
-            oThis.onMouseDown(e);
-        });
-
-        this.canvas.addEventListener("mousewheel", function (e) {
-            oThis.onMouseWheel(e);
-        });
-    }
-
-    getMouseVec2(e) {
-        return {x:e.pageX - this.offsetX, y:e.pageY - this.offsetY};
-    }
-
-    onMouseDown(e) {
-        this.initX = this.prevX = e.pageX - this.offsetX;
-        this.initY = this.prevY = e.pageY - this.offsetY;
-
-        this.canvas.addEventListener('mouseup',this.onUpHandler);
-        this.canvas.addEventListener('mousemove',this.onMoveHandler);
-    }
-
-    onMouseUp(e) {
-        this.canvas.removeEventListener('mouseup', this.onUpHandler);
-        this.canvas.removeEventListener('mousemove', this.onMoveHandler);
-    }
-
-    onMouseWheel(e){
-        let delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail));
-        this.camera.panZ(delta * (this.zoomRate / this.canvas.height));
-    }
-
-    onMouseMove(e) {
-        let x = e.pageX - this.offsetX,
-            y = e.pageY - this.offsetY,
-            dx = x - this.prevX,
-            dy = y - this.prevY;
-
-        if(!e.shiftKey) {
-            this.camera.transform.rotation.y += dx * (this.rotateRate / this.canvas.width);
-            this.camera.transform.rotation.x += dy * (this.rotateRate / this.canvas.height);
-        } else {
-            this.camera.panX(-dx * (this.panRate / this.canvas.width));
-            this.camera.panY(dy * (this.panRate / this.canvas.height));
-        }
-
-        this.prevX = x;
-        this.prevY = y;
-    }
-
-}
+Camera.MODE_FREE = 0;	//Allows free movement of position and rotation, basicly first person type of camera
+Camera.MODE_ORBIT = 1;	//Movement is locked to rotate around the origin, Great for 3d editors or a single model viewer

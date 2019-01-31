@@ -1,66 +1,81 @@
-import GLInstance from './gl';
 import cfg from '../config/config';
 
 let Primitives = {};
 export default Primitives;
 Primitives.GridAxis = class {
-    static createMesh(gl) {
+    static createModal(gl, incAxis) {
+        return new Modal(Primitives.GridAxis.createMesh(gl, incAxis));
+    }
+
+    static createMesh(gl, incAxis) {
         let verts = [],
-            size = 1.8,
+            size = 2,
             div = 10.0,
             step = size / div,
             half = size / 2;
 
         let p;
-        for(let i = 0; i <= div; i++) {
+        for (let i = 0; i <= div; i++) {
             p = -half + (i * step);
             verts.push(p);
-            verts.push(half);
             verts.push(0);
+            verts.push(half);
             verts.push(0);
 
             verts.push(p);
+            verts.push(0);
             verts.push(-half);
             verts.push(0);
-            verts.push(1);
 
             p = half - (i * step);
             verts.push(-half);
-            verts.push(p);
             verts.push(0);
+            verts.push(p );
             verts.push(0);
 
             verts.push(half);
+            verts.push(0);
             verts.push(p);
             verts.push(0);
-            verts.push(1);
         }
+        if (incAxis) {
+//x axis
+            verts.push(-1.1);	//x1
+            verts.push(0);		//y1
+            verts.push(0);		//z1
+            verts.push(1);		//c2
 
-        verts.push(-half);	//x1
-        verts.push(-half);	//y1
-        verts.push(0);		//z1
-        verts.push(2);		//c2
+            verts.push(1.1);	//x2
+            verts.push(0);		//y2
+            verts.push(0);		//z2
+            verts.push(1);		//c2
 
-        verts.push(half);	//x2
-        verts.push(half);	//y2
-        verts.push(0);		//z2
-        verts.push(2);		//c2
+            //y axis
+            verts.push(0);//x1
+            verts.push(-1.1);	//y1
+            verts.push(0);		//z1
+            verts.push(2);		//c2
 
-        verts.push(-half);	//x1
-        verts.push(half);	//y1
-        verts.push(0);		//z1
-        verts.push(3);		//c2
+            verts.push(0);		//x2
+            verts.push(1.1);	//y2
+            verts.push(0);		//z2
+            verts.push(2);		//c2
 
-        verts.push(half);	//x2
-        verts.push(-half);	//y2
-        verts.push(0);		//z2
-        verts.push(3);		//c2
+            //z axis
+            verts.push(0);		//x1
+            verts.push(0);		//y1
+            verts.push(-1.1);	//z1
+            verts.push(3);		//c2
 
-
+            verts.push(0);		//x2
+            verts.push(0);		//y2
+            verts.push(1.1);	//z2
+            verts.push(3);		//c2
+        }
 
         let attrColorLocation = 4,
             strideLen,
-            mesh = { drawMode:gl.LINES, vao:gl.createVertexArray()};
+            mesh = {drawMode: gl.LINES, vao: gl.createVertexArray()};
 
         mesh.vertexComponentLen = 4;
         mesh.vertexCount = verts.length / mesh.vertexComponentLen;
