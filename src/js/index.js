@@ -29,8 +29,10 @@ window.addEventListener('load', function () {
 
     gGridShader = new GridShader(gl, gCamera.projectionMatrix);
     gGridModal = Primitives.GridAxis.createModal(gl, true);
-    gShader = new TestShader(gl, gCamera.projectionMatrix);
 
+    gShader = new TestShader(gl, gCamera.projectionMatrix);
+    gModal = Primitives.Quad.createModal(gl);
+    gModal.setPosition(0,1,0).setScale(0.2,0.2,0.8);
 
     gModal = new Modal(Primitives.GridAxis.createMesh(gl, true));
     gRLoop = new RenderLoop(onRender).start();
@@ -41,6 +43,10 @@ function onRender(dt) {
     gl.fClear();
 
     gGridShader.activate()
+        .setCameraMatrix(gCamera.viewMatrix)
+        .renderModal(gModal.preRender());
+
+    gShader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
         .renderModal(gModal.preRender());
 }

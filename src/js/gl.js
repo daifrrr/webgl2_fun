@@ -9,6 +9,14 @@ export default function GLInstance(canvasID) {
 
     gl.mMeshCache = [];
 
+    gl.cullFace(gl.BACK);                               //Default
+    gl.frontFace(gl.CCW);                               //Default
+    gl.enable(gl.DEPTH_TEST);                           //Fragment px near override far
+    gl.enable(gl.CULL_FACE);                            //Clockwise triangles ???
+    gl.depthFunc(gl.LEQUAL);                            //Near obscure Far
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); //Setup Default Alpha Blending
+
+
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
     gl.fClear = function () {

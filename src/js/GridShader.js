@@ -1,4 +1,4 @@
-import vGShader from '../shaders/vShader.glsl';
+import vGShader from '../shaders/vGShader.glsl';
 import fGShader from '../shaders/fGShader.glsl';
 import Shader from './Shader';
 

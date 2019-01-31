@@ -3,6 +3,34 @@ import Modal from './Modal';
 
 let Primitives = {};
 export default Primitives;
+
+Primitives.Quad = class {
+    static createModal(gl) { return new Modal(Primitives.Quad.createMesh(gl))}
+    static createMesh(gl) {
+        let aVertices = [
+            -0.5,  0.5, 0,
+            -0.5, -0.5, 0,
+             0.5, -0.5, 0,
+             0.5,  0.5, 0
+        ];
+        let aUV = [
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0
+        ];
+        let aIndex = [
+            0, 1, 2,
+            2, 3, 0
+        ];
+        let mesh = gl.fCreateMeshVAO("quad", aIndex, aVertices, null, aUV);
+        mesh.noCulling = false;
+        mesh.doBlending = false;
+        return mesh;
+    }
+};
+
+
 Primitives.GridAxis = class {
     static createModal(gl, incAxis) {
         return new Modal(Primitives.GridAxis.createMesh(gl, incAxis));
