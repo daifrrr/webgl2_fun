@@ -39,7 +39,7 @@ Primitives.GridAxis = class {
             verts.push(0);
         }
         if (incAxis) {
-//x axis
+            //x axis
             verts.push(-1.1);	//x1
             verts.push(0);		//y1
             verts.push(0);		//z1

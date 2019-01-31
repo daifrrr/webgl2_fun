@@ -6,7 +6,7 @@ export default class RenderLoop {
         this.isActive = false;
         this.fps = fps;
 
-        if (!this.fps && this.fps > 0) {
+        if (fps !== undefined && this.fps > 0) {
             this.msFpsLimit = 1000 / fps;
             this.run = function () {
                 let msCurrent = performance.now(),

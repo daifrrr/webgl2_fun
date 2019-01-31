@@ -30,13 +30,13 @@ window.addEventListener('load', function () {
 
 
     gModal = new Modal(Primitives.GridAxis.createMesh(gl, true));
-    gRLoop = new RenderLoop(onRender).start();
+    gRLoop = new RenderLoop(onRender, 10).start();
 });
 
 function onRender(dt) {
     gCamera.updateViewMatrix();
     gl.fClear();
-
+    console.log(gRLoop.oThis.fps);
     gShader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
         .renderModal( gModal.preRender() );
