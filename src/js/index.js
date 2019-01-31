@@ -1,6 +1,7 @@
 import '../css/style.css';
-import vSHADER from '../shaders/vertex.glsl';
-import fSHADER from '../shaders/fragment.glsl';
+import vShader from '../shaders/vShader.glsl';
+import fShader from '../shaders/fShader.glsl';
+import GridShader from './GridShader';
 import GLInstance from './gl';
 import RenderLoop from './RenderLoop';
 import Shader from './Shader';
@@ -12,7 +13,9 @@ import CameraController from './CameraController';
 let gl,
     gRLoop,
     gModal,
-    gShader;
+    gShader,
+    gGridShader,
+    gGridModal;
 let gCamera,
     gCameraControl;
 
@@ -21,12 +24,12 @@ window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fFitScreen(0.95, 0.9).fClear();
 
     gCamera = new Camera(gl);
-    gCamera.transform.position.set(0,1,3);
+    gCamera.transform.position.set(0, 1, 3);
     gCameraControl = new CameraController(gl, gCamera);
 
-    gShader = new TestShader(gl, [0.8, 0.8, 0.8, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
-
-    gShader.activate().setPerspective(gCamera.projectionMatrix).deactivate();
+    gGridShader = new GridShader(gl, gCamera.projectionMatrix);
+    gGridModal = Primitives.GridAxis.createModal(gl, true);
+    gShader = new TestShader(gl, gCamera.projectionMatrix);
 
 
     gModal = new Modal(Primitives.GridAxis.createMesh(gl, true));
@@ -37,18 +40,15 @@ function onRender(dt) {
     gCamera.updateViewMatrix();
     gl.fClear();
 
-    gShader.activate()
+    gGridShader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
-        .renderModal( gModal.preRender() );
+        .renderModal(gModal.preRender());
 }
 
 class TestShader extends Shader {
-    constructor(gl, aryColor) {
-        super(gl, vSHADER, fSHADER);
-
-        let uColor = gl.getUniformLocation(this.program, 'uColor');
-
-        gl.uniform3fv(uColor, aryColor);
+    constructor(gl, pMatrix) {
+        super(gl, vShader, fShader);
+        this.setPerspective(pMatrix);
         gl.useProgram(null);
     }
 }

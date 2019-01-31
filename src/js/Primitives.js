@@ -1,4 +1,5 @@
 import cfg from '../config/config';
+import Modal from './Modal';
 
 let Primitives = {};
 export default Primitives;
@@ -8,7 +9,7 @@ Primitives.GridAxis = class {
     }
 
     static createMesh(gl, incAxis) {
-        let verts = [],
+        let vertices = [],
             size = 2,
             div = 10.0,
             step = size / div,
@@ -17,60 +18,60 @@ Primitives.GridAxis = class {
         let p;
         for (let i = 0; i <= div; i++) {
             p = -half + (i * step);
-            verts.push(p);
-            verts.push(0);
-            verts.push(half);
-            verts.push(0);
+            vertices.push(p);
+            vertices.push(0);
+            vertices.push(half);
+            vertices.push(0);
 
-            verts.push(p);
-            verts.push(0);
-            verts.push(-half);
-            verts.push(0);
+            vertices.push(p);
+            vertices.push(0);
+            vertices.push(-half);
+            vertices.push(0);
 
             p = half - (i * step);
-            verts.push(-half);
-            verts.push(0);
-            verts.push(p );
-            verts.push(0);
+            vertices.push(-half);
+            vertices.push(0);
+            vertices.push(p );
+            vertices.push(0);
 
-            verts.push(half);
-            verts.push(0);
-            verts.push(p);
-            verts.push(0);
+            vertices.push(half);
+            vertices.push(0);
+            vertices.push(p);
+            vertices.push(0);
         }
         if (incAxis) {
-//x axis
-            verts.push(-1.1);	//x1
-            verts.push(0);		//y1
-            verts.push(0);		//z1
-            verts.push(1);		//c2
+            //x axis
+            vertices.push(-1.1);	//x1
+            vertices.push(0);		//y1
+            vertices.push(0);		//z1
+            vertices.push(1);		//c2
 
-            verts.push(1.1);	//x2
-            verts.push(0);		//y2
-            verts.push(0);		//z2
-            verts.push(1);		//c2
+            vertices.push(1.1);	//x2
+            vertices.push(0);		//y2
+            vertices.push(0);		//z2
+            vertices.push(1);		//c2
 
             //y axis
-            verts.push(0);//x1
-            verts.push(-1.1);	//y1
-            verts.push(0);		//z1
-            verts.push(2);		//c2
+            vertices.push(0);//x1
+            vertices.push(-1.1);	//y1
+            vertices.push(0);		//z1
+            vertices.push(2);		//c2
 
-            verts.push(0);		//x2
-            verts.push(1.1);	//y2
-            verts.push(0);		//z2
-            verts.push(2);		//c2
+            vertices.push(0);		//x2
+            vertices.push(1.1);	//y2
+            vertices.push(0);		//z2
+            vertices.push(2);		//c2
 
             //z axis
-            verts.push(0);		//x1
-            verts.push(0);		//y1
-            verts.push(-1.1);	//z1
-            verts.push(3);		//c2
+            vertices.push(0);		//x1
+            vertices.push(0);		//y1
+            vertices.push(-1.1);	//z1
+            vertices.push(3);		//c2
 
-            verts.push(0);		//x2
-            verts.push(0);		//y2
-            verts.push(1.1);	//z2
-            verts.push(3);		//c2
+            vertices.push(0);		//x2
+            vertices.push(0);		//y2
+            vertices.push(1.1);	//z2
+            vertices.push(3);		//c2
         }
 
         let attrColorLocation = 4,
@@ -78,13 +79,13 @@ Primitives.GridAxis = class {
             mesh = {drawMode: gl.LINES, vao: gl.createVertexArray()};
 
         mesh.vertexComponentLen = 4;
-        mesh.vertexCount = verts.length / mesh.vertexComponentLen;
+        mesh.vertexCount = vertices.length / mesh.vertexComponentLen;
         strideLen = Float32Array.BYTES_PER_ELEMENT * mesh.vertexComponentLen;
 
         mesh.bufVertices = gl.createBuffer();
         gl.bindVertexArray(mesh.vao);
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.bufVertices);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
         gl.enableVertexAttribArray(cfg.ATTR_POSITION_LOC);
         gl.enableVertexAttribArray(attrColorLocation);
 
