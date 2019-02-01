@@ -7,7 +7,7 @@ export default class shaderUtil {
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.log(gl.getShaderInfoLog(shader));
+            console.error(gl.getShaderInfoLog(shader));
             gl.deleteShader(shader);
         }
         return shader;

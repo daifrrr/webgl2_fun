@@ -81,12 +81,13 @@ export default function GLInstance(canvasID) {
             rtn.indexCount = aryInd.length;
             this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, rtn.bufIndex);
             this.bufferData(this.ELEMENT_ARRAY_BUFFER, new Uint16Array(aryInd), this.STATIC_DRAW);
-            this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, null);
+            // this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, null);
         }
 
         //Clean up
         this.bindVertexArray(null);					//Unbind the VAO, very Important. always unbind when your done using one.
         this.bindBuffer(this.ARRAY_BUFFER, null);	//Unbind any buffers that might be set
+        if(aryInd != null) this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, null);
 
         this.mMeshCache[name] = rtn;
         return rtn;

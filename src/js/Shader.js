@@ -39,6 +39,9 @@ export default class Shader {
     renderModal(modal) {
         this.setModalMatrix(modal.transform.getViewMatrix());
         this.gl.bindVertexArray(modal.mesh.vao);
+
+
+
         if(modal.mesh.indexCount) {
             this.gl.drawElements(modal.mesh.drawMode, modal.mesh.indexCount, this.gl.UNSIGNED_SHORT, 0);
         } else {

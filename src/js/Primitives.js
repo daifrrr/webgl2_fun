@@ -23,7 +23,7 @@ Primitives.Quad = class {
             0, 1, 2,
             2, 3, 0
         ];
-        let mesh = gl.fCreateMeshVAO("quad", aIndex, aVertices, null, aUV);
+        let mesh = gl.fCreateMeshVAO("Quad", aIndex, aVertices, null, aUV);
         mesh.noCulling = false;
         mesh.doBlending = false;
         return mesh;

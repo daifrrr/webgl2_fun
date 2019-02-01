@@ -13,6 +13,7 @@ import CameraController from './CameraController';
 let gl,
     gRLoop,
     gModal,
+    gModal2 = [],
     gShader,
     gGridShader,
     gGridModal;
@@ -32,10 +33,13 @@ window.addEventListener('load', function () {
 
     gShader = new TestShader(gl, gCamera.projectionMatrix);
     gModal = Primitives.Quad.createModal(gl);
-    gModal.setPosition(0,1,0).setScale(0.2,0.2,0.8);
+    gModal.setPosition(0,1,0).setScale(0.2,0.2,0.2);
+    for(let i = 0; i < 3; i++) {
+        gModal2[i] = Primitives.Quad.createModal(gl);
+        gModal2[i].setPosition(0, 0, i / 2);
+    }
 
-    gModal = new Modal(Primitives.GridAxis.createMesh(gl, true));
-    gRLoop = new RenderLoop(onRender).start();
+    gRLoop = new RenderLoop(onRender, 60).start();
 });
 
 function onRender(dt) {
@@ -44,11 +48,13 @@ function onRender(dt) {
 
     gGridShader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
-        .renderModal(gModal.preRender());
-
+        .renderModal(gGridModal.preRender());
     gShader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
-        .renderModal(gModal.preRender());
+        .renderModal(gModal.addRotation(0, 0.2, 0).preRender());
+    gModal2.forEach(function(a) {
+        gShader.activate().renderModal(a.addRotation(0, 0, 0.1).preRender());
+    });
 }
 
 class TestShader extends Shader {
