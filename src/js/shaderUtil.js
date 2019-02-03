@@ -24,7 +24,6 @@ export default class shaderUtil {
         gl.bindAttribLocation(program, cfg.ATTR_UV_LOC, cfg.ATTR_UV_NAME);
 
         gl.linkProgram(program);
-
         if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             console.error('Error creating shader program', gl.getProgramInfoLog(program));
             gl.deleteProgram(program);

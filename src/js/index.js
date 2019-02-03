@@ -1,11 +1,11 @@
 import '../css/style.css';
+import tex001 from '../resources/uv_grid_lrg.jpg';
 import vShader from '../shaders/vShader.glsl';
 import fShader from '../shaders/fShader.glsl';
 import GridShader from './GridShader';
 import GLInstance from './gl';
 import RenderLoop from './RenderLoop';
 import Shader from './Shader';
-import Modal from './Modal';
 import Primitives from './Primitives';
 import Camera from './Camera';
 import CameraController from './CameraController';
@@ -28,14 +28,16 @@ window.addEventListener('load', function () {
     gCamera.transform.position.set(0, 1, 3);
     gCameraControl = new CameraController(gl, gCamera);
 
-    gGridShader = new GridShader(gl, gCamera.projectionMatrix);
-    gGridModal = Primitives.GridAxis.createModal(gl, true);
+    gl.fLoadTexture('tex001', document.getElementById('texImg'));
+    console.log(gl.mTextureCache);
 
-    gShader = new TestShader(gl, gCamera.projectionMatrix);
+    gGridShader = new GridShader(gl, gCamera.projectionMatrix);
+    gGridModal = Primitives.GridAxis.createModal(gl, false);
+
+    gShader = new TestShader(gl, gCamera.projectionMatrix)
+        .setTexture(gl.mTextureCache["tex001"]);
     gModal = Primitives.Quad.createModal(gl);
-    gModal.setPosition(0,1,0).setScale(0.2,0.2,0.2);
-    gModal2 = Primitives.Quad.createModal(gl);
-    gModal2.setPosition(0, 0, 0);
+    gModal.setPosition(0, 0.6, 0);
 
     gRLoop = new RenderLoop(onRender, 60).start();
 });
@@ -47,16 +49,31 @@ function onRender(dt) {
     gGridShader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
         .renderModal(gGridModal.preRender());
+
     gShader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
-        .renderModal(gModal.preRender())
-        .renderModal(gModal2.preRender());
+        .renderModal(gModal.preRender());
 }
 
 class TestShader extends Shader {
     constructor(gl, pMatrix) {
         super(gl, vShader, fShader);
         this.setPerspective(pMatrix);
+
+        gl.mainTexture = -1;
         gl.useProgram(null);
+    }
+
+    setTexture(texID) {
+        this.mainTexture = texID;
+        return this;
+    }
+
+    preRender() {
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.mainTexture);
+        this.gl.uniform1i(this.uniformLoc.mainTexture,0);
+
+        return this;
     }
 }

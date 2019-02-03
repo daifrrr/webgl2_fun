@@ -15,9 +15,9 @@ Primitives.Quad = class {
         ];
         let aUV = [
             0,0,
-            0,1,
-            -1,1,
             1,0,
+            1,1,
+            0,1
         ];
         let aIndex = [
             0, 1, 2,

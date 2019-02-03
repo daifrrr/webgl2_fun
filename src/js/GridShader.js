@@ -1,5 +1,5 @@
-import vGShader from '../shaders/vGShader.glsl';
-import fGShader from '../shaders/fGShader.glsl';
+import vGShader from '../shaders/Grid/vGShader.glsl';
+import fGShader from '../shaders/Grid/fGShader.glsl';
 import Shader from './Shader';
 
 export default class GridAxisShader extends Shader {

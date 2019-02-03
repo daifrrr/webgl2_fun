@@ -6,9 +6,9 @@ uniform mat4 uPMatrix;
 uniform mat4 uCameraMatrix;
 uniform mat4 uMVMatrix;
 
-out vec2 uv;
+out highp vec2 texCoord;
 
 void main() {
-    uv = a_uv;
+    texCoord = a_uv;
     gl_Position = uPMatrix * uCameraMatrix * uMVMatrix * vec4(a_position, 1.0);
 }
