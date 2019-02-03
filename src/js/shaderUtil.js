@@ -15,15 +15,15 @@ export default class shaderUtil {
 
     static createProgram(gl, vertexShader, fragmentShader, doValidate) {
         let program = gl.createProgram();
+
         gl.attachShader(program, vertexShader);
         gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
 
         gl.bindAttribLocation(program, cfg.ATTR_POSITION_LOC, cfg.ATTR_POSITION_NAME);
         gl.bindAttribLocation(program, cfg.ATTR_NORMAL_LOC, cfg.ATTR_NORMAL_NAME);
         gl.bindAttribLocation(program, cfg.ATTR_UV_LOC, cfg.ATTR_UV_NAME);
 
-
+        gl.linkProgram(program);
 
         if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             console.error('Error creating shader program', gl.getProgramInfoLog(program));

@@ -3,7 +3,7 @@ import ShaderUtil from './shaderUtil';
 export default class Shader {
 
     constructor(gl, vertShaderSrc, fragShaderSrc) {
-        this.program = ShaderUtil.getShaderProgram(gl, vertShaderSrc, fragShaderSrc);
+        this.program = ShaderUtil.getShaderProgram(gl, vertShaderSrc, fragShaderSrc, true );
 
         if(this.program != null) {
             this.gl = gl;
@@ -40,6 +40,8 @@ export default class Shader {
         this.setModalMatrix(modal.transform.getViewMatrix());
         this.gl.bindVertexArray(modal.mesh.vao);
 
+        if(modal.mesh.noCulling) this.gl.disable(this.gl.CULL_FACE);
+        if(modal.mesh.doBlending) this.gl.enable(this.gl.BLEND);
 
 
         if(modal.mesh.indexCount) {
@@ -48,6 +50,9 @@ export default class Shader {
             this.gl.drawArrays(modal.mesh.drawMode, 0, modal.mesh.vertexCount);
         }
         this.gl.bindVertexArray(null);
+
+        if(modal.mesh.noCulling) this.gl.enable(this.gl.CULL_FACE);
+        if(modal.mesh.doBlending) this.gl.disable(this.gl.BLEND);
 
         return this;
     }

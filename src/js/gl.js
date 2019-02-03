@@ -71,7 +71,7 @@ export default function GLInstance(canvasID) {
             this.bindBuffer(this.ARRAY_BUFFER, rtn.bufUV);
             this.bufferData(this.ARRAY_BUFFER, new Float32Array(aryUV), this.STATIC_DRAW);
             this.enableVertexAttribArray(cfg.ATTR_UV_LOC);
-            this.vertexAttribPointer(cfg.ATTR_UV_LOC, 2, this.FLOAT, false, 0, 0);	//UV only has two floats per component
+            this.vertexAttribPointer(cfg.ATTR_UV_LOC, 4, this.FLOAT, false, 0, 0);	//UV only has two floats per component
         }
 
         //.......................................................
@@ -88,7 +88,7 @@ export default function GLInstance(canvasID) {
         this.bindVertexArray(null);					//Unbind the VAO, very Important. always unbind when your done using one.
         this.bindBuffer(this.ARRAY_BUFFER, null);	//Unbind any buffers that might be set
         if(aryInd != null) this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, null);
-
+        console.log(rtn.vao);
         this.mMeshCache[name] = rtn;
         return rtn;
     };
