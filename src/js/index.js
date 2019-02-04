@@ -28,16 +28,26 @@ window.addEventListener('load', function () {
     gCamera.transform.position.set(0, 1, 3);
     gCameraControl = new CameraController(gl, gCamera);
 
-    gl.fLoadTexture('tex001', document.getElementById('texImg'));
-    console.log(gl.mTextureCache);
-
+    gl.fLoadTexture("tex001", document.getElementById("texImg"));
+    let image = new Image();
+    image.src = tex001;
+    //gl.fLoadTexture("tex001", image);
     gGridShader = new GridShader(gl, gCamera.projectionMatrix);
-    gGridModal = Primitives.GridAxis.createModal(gl, false);
+    gGridModal = Primitives.GridAxis.createModal(gl, true);
+
 
     gShader = new TestShader(gl, gCamera.projectionMatrix)
         .setTexture(gl.mTextureCache["tex001"]);
-    gModal = Primitives.Quad.createModal(gl);
-    gModal.setPosition(0, 0.6, 0);
+
+    for (let i = 0; i < 6; i++) {
+        gModal2[i] = Primitives.Quad.createModal(gl);
+    }
+    gModal2[0].setPosition(0, 0.5,  0.5);
+    gModal2[1].setPosition(0, 0.5, -0.5).setRotation(0, 180, 0);
+    gModal2[2].setPosition(0.5, 0.5, 0).setRotation(0, 90, 0);
+    gModal2[3].setPosition(-0.5, 0.5, 0).setRotation(0, 270, 0);
+    gModal2[4].setPosition(0, 1, 0).setRotation(90, 180, 180);
+    gModal2[5].setPosition(0, 0, 0).setRotation(270, 180, 0);
 
     gRLoop = new RenderLoop(onRender, 60).start();
 });
@@ -50,9 +60,10 @@ function onRender(dt) {
         .setCameraMatrix(gCamera.viewMatrix)
         .renderModal(gGridModal.preRender());
 
-    gShader.activate()
-        .setCameraMatrix(gCamera.viewMatrix)
-        .renderModal(gModal.preRender());
+    gShader.activate().setCameraMatrix(gCamera.viewMatrix);
+    gModal2.forEach(function (modal, i) {
+        gShader.renderModal(modal.addRotation(0, 5, 0).setScale(Math.sin(-1), Math.sin(-1), 0).preRender());
+    });
 }
 
 class TestShader extends Shader {
@@ -72,7 +83,7 @@ class TestShader extends Shader {
     preRender() {
         this.gl.activeTexture(this.gl.TEXTURE0);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.mainTexture);
-        this.gl.uniform1i(this.uniformLoc.mainTexture,0);
+        this.gl.uniform1i(this.uniformLoc.mainTexture, 0);
 
         return this;
     }
