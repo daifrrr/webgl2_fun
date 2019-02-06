@@ -35,11 +35,11 @@ window.addEventListener('load', function () {
     gGridModal = Primitives.GridAxis.createModal(gl, true);
 
 
-    gShader = new TestShader(gl, gCamera.projectionMatrix)
-        .setTexture(gl.mTextureCache["tex001"]);
+    gShader = new TestShader(gl, gCamera.projectionMatrix);
+        //.setTexture(gl.mTextureCache["tex001"]);
     gModal = Primitives.Cube.createModal(gl)
         .setPosition(0, 0.2, 0)
-        .setScale(0.2,0.2,0.2);
+        .setScale(0.1, 0.1, 0.1);
     /*
     for (let i = 0; i < 6; i++) {
         gModal2[i] = Primitives.Quad.createModal(gl);
@@ -63,10 +63,10 @@ function onRender(dt) {
         .setCameraMatrix(gCamera.viewMatrix)
         .renderModal(gGridModal.preRender());
 
-    gShader.activate().setCameraMatrix(gCamera.viewMatrix)
-        .renderModal(gModal
-            .addRotation(0, 0.75,0)
-            .preRender());
+    gShader.activate()
+        .setCameraMatrix(gCamera.viewMatrix)
+        .setTime(performance.now())
+        .renderModal(gModal.preRender());
     /*gModal2.forEach(function(modal) {
        gShader.renderModal(modal.preRender());
     });*/
@@ -76,10 +76,20 @@ function onRender(dt) {
 class TestShader extends Shader {
     constructor(gl, pMatrix) {
         super(gl, vShader, fShader);
-        this.setPerspective(pMatrix);
 
-        gl.mainTexture = -1;
+        this.uniformLoc.time = gl.getUniformLocation(this.program,"uTime");
+
+        let uColor = gl.getUniformLocation(this.program, "uColor");
+        gl.uniform3fv(uColor, new Float32Array([0.16, 0.32, 0.48, 0.64, 0.8, 0.96]));
+
+        this.setPerspective(pMatrix);
+        this.mainTexture = -1;
         gl.useProgram(null);
+    }
+
+    setTime(t){
+        this.gl.uniform1f(this.uniformLoc.time,t);
+        return this;
     }
 
     setTexture(texID) {

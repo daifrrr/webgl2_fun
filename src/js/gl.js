@@ -35,7 +35,7 @@ export default function GLInstance(canvasID) {
         return buf;
     };
 
-    gl.fCreateMeshVAO = function (name, aryInd, aryVert, aryNorm, aryUV) {
+    gl.fCreateMeshVAO = function (name, aryInd, aryVert, aryNorm, aryUV, vertLength) {
         let rtn = {drawMode: this.TRIANGLES};
 
         //Create and bind vao
@@ -46,7 +46,7 @@ export default function GLInstance(canvasID) {
         //Set up vertices
         if (aryVert !== undefined && aryVert != null) {
             rtn.bufVertices = this.createBuffer();													//Create buffer...
-            rtn.vertexComponentLen = 3;																//How many floats make up a vertex
+            rtn.vertexComponentLen = vertLength;																//How many floats make up a vertex
             rtn.vertexCount = aryVert.length / rtn.vertexComponentLen;								//How many vertices in the array
 
             this.bindBuffer(this.ARRAY_BUFFER, rtn.bufVertices);
