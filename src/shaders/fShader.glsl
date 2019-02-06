@@ -8,5 +8,6 @@ out vec4 finalColor;
 
 
 void main() {
-    finalColor = texture(uMainTex, vec2(texCoord.s, texCoord.t));
+    //finalColor = vec4(1,0,0,1);
+    finalColor = texture(uMainTex, texCoord);
 }

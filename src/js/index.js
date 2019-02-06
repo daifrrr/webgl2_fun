@@ -25,30 +25,33 @@ window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fFitScreen(0.95, 0.9).fClear();
 
     gCamera = new Camera(gl);
-    gCamera.transform.position.set(0, 1, 3);
+    gCamera.transform.position.set(0, 0.2, 0.5);
     gCameraControl = new CameraController(gl, gCamera);
 
-    gl.fLoadTexture("tex001", document.getElementById("texImg"));
-    let image = new Image();
-    image.src = tex001;
-    //gl.fLoadTexture("tex001", image);
+    gl.fLoadTexture("tex001", document.getElementById("tex01Img"));
+
+
     gGridShader = new GridShader(gl, gCamera.projectionMatrix);
     gGridModal = Primitives.GridAxis.createModal(gl, true);
 
 
     gShader = new TestShader(gl, gCamera.projectionMatrix)
         .setTexture(gl.mTextureCache["tex001"]);
-
+    gModal = Primitives.Cube.createModal(gl)
+        .setPosition(0, 0.2, 0)
+        .setScale(0.2,0.2,0.2);
+    /*
     for (let i = 0; i < 6; i++) {
         gModal2[i] = Primitives.Quad.createModal(gl);
     }
+
     gModal2[0].setPosition(0, 0.5,  0.5);
     gModal2[1].setPosition(0, 0.5, -0.5).setRotation(0, 180, 0);
     gModal2[2].setPosition(0.5, 0.5, 0).setRotation(0, 90, 0);
     gModal2[3].setPosition(-0.5, 0.5, 0).setRotation(0, 270, 0);
     gModal2[4].setPosition(0, 1, 0).setRotation(90, 180, 180);
     gModal2[5].setPosition(0, 0, 0).setRotation(270, 180, 0);
-
+    */
     gRLoop = new RenderLoop(onRender, 60).start();
 });
 
@@ -60,10 +63,14 @@ function onRender(dt) {
         .setCameraMatrix(gCamera.viewMatrix)
         .renderModal(gGridModal.preRender());
 
-    gShader.activate().setCameraMatrix(gCamera.viewMatrix);
-    gModal2.forEach(function (modal, i) {
-        gShader.renderModal(modal.addRotation(0, 5, 0).setScale(Math.sin(-1), Math.sin(-1), 0).preRender());
-    });
+    gShader.activate().setCameraMatrix(gCamera.viewMatrix)
+        .renderModal(gModal
+            .addRotation(0, 0.75,0)
+            .preRender());
+    /*gModal2.forEach(function(modal) {
+       gShader.renderModal(modal.preRender());
+    });*/
+
 }
 
 class TestShader extends Shader {
