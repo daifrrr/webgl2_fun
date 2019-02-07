@@ -46,13 +46,13 @@ export default function GLInstance(canvasID) {
         //Set up vertices
         if (aryVert !== undefined && aryVert != null) {
             rtn.bufVertices = this.createBuffer();													//Create buffer...
-            rtn.vertexComponentLen = vertLength;																//How many floats make up a vertex
+            rtn.vertexComponentLen = vertLength || 3;																//How many floats make up a vertex
             rtn.vertexCount = aryVert.length / rtn.vertexComponentLen;								//How many vertices in the array
 
             this.bindBuffer(this.ARRAY_BUFFER, rtn.bufVertices);
             this.bufferData(this.ARRAY_BUFFER, new Float32Array(aryVert), this.STATIC_DRAW);		//then push array into it.
             this.enableVertexAttribArray(cfg.ATTR_POSITION_LOC);										//Enable Attribute location
-            this.vertexAttribPointer(cfg.ATTR_POSITION_LOC, 3, this.FLOAT, false, 0, 0);						//Put buffer at location of the vao
+            this.vertexAttribPointer(cfg.ATTR_POSITION_LOC, rtn.vertexComponentLen, this.FLOAT, false, 0, 0);						//Put buffer at location of the vao
         }
 
         //.......................................................

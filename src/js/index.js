@@ -9,6 +9,7 @@ import Shader from './Shader';
 import Primitives from './Primitives';
 import Camera from './Camera';
 import CameraController from './CameraController';
+import Utils from './Utils/Utils';
 
 let gl,
     gRLoop,
@@ -30,7 +31,6 @@ window.addEventListener('load', function () {
 
     gl.fLoadTexture("tex001", document.getElementById("tex01Img"));
 
-
     gGridShader = new GridShader(gl, gCamera.projectionMatrix);
     gGridModal = Primitives.GridAxis.createModal(gl, true);
 
@@ -39,7 +39,7 @@ window.addEventListener('load', function () {
         //.setTexture(gl.mTextureCache["tex001"]);
     gModal = Primitives.Cube.createModal(gl)
         .setPosition(0, 0.2, 0)
-        .setScale(0.1, 0.1, 0.1);
+        .setScale(0.5, 0.5, 0.5);
     /*
     for (let i = 0; i < 6; i++) {
         gModal2[i] = Primitives.Quad.createModal(gl);
@@ -80,7 +80,13 @@ class TestShader extends Shader {
         this.uniformLoc.time = gl.getUniformLocation(this.program,"uTime");
 
         let uColor = gl.getUniformLocation(this.program, "uColor");
-        gl.uniform3fv(uColor, new Float32Array([0.16, 0.32, 0.48, 0.64, 0.8, 0.96]));
+        gl.uniform3fv(uColor, new Float32Array(Utils.rgbHexToFloat(
+            "#FF0000",
+            "#00FF00",
+            "#0000FF",
+            "#909090",
+            "#C0C0C0",
+            "#404040")));
 
         this.setPerspective(pMatrix);
         this.mainTexture = -1;

@@ -55,7 +55,7 @@ Primitives.Cube = class {
         let aNormals = [
             0, 0, 1,	 0, 0, 1,	 0, 0, 1,	 0, 0, 1,		//Front
             0, 0,-1,	 0, 0,-1,	 0, 0,-1,	 0, 0,-1,		//Back
-            -1, 0, 0,	-1, 0, 0,	-1, 0,0 ,	-1, 0, 0,		//Left
+            -1, 0, 0, 	-1, 0, 0,	-1, 0,0 ,	-1, 0, 0,		//Left
             0,-1, 0,	 0,-1, 0,	 0,-1, 0,	 0,-1, 0,		//Bottom
             1, 0, 0,	 1, 0, 0,	 1, 0, 0,	 1, 0, 0,		//Right
             0, 1, 0,	 0, 1, 0,	 0, 1, 0,	 0, 1, 0		//Top
@@ -65,7 +65,7 @@ Primitives.Cube = class {
             aUVs.push(0, 0,     0, 1,    1, 1,   1, 0);
         }
         let mesh = gl.fCreateMeshVAO("Cube", aIndices, aVertices, aNormals, aUVs, 4);
-        mesh.noCulling = false;
+        mesh.noCulling = true;
         mesh.doBlending = false;
         return mesh;
     }
