@@ -12,5 +12,5 @@ out vec4 finalColor;
 void main() {
     //finalColor = vec4(1,0,0,1);
     //finalColor = texture(uMainTex, texCoord);
-    finalColor = color;
+    finalColor = mix(color,texture(uMainTex,texCoord),0.8f);
 }

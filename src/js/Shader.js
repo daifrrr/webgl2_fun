@@ -3,7 +3,7 @@ import ShaderUtil from './shaderUtil';
 export default class Shader {
 
     constructor(gl, vertShaderSrc, fragShaderSrc) {
-        this.program = ShaderUtil.getShaderProgram(gl, vertShaderSrc, fragShaderSrc, true );
+        this.program = ShaderUtil.getShaderProgram(gl, vertShaderSrc, fragShaderSrc);
 
         if(this.program != null) {
             this.gl = gl;

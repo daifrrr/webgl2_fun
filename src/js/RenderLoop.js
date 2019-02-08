@@ -6,17 +6,19 @@ export default class RenderLoop {
         this.isActive = false;
         this.fps = fps;
 
-        if (0 === 0) {
+        if (fps !== undefined && fps > 0) {
             this.msFpsLimit = 1000 / fps;
             this.run = function () {
                 let msCurrent = performance.now(),
-                    msDelta   = (msCurrent + oThis.msFpsLimit),
+                    msDelta = (msCurrent - oThis.msLastFrame),
                     deltaTime = msDelta / 1000.0;
+
                 if (msDelta >= oThis.msFpsLimit) {
                     oThis.fps = Math.floor(1 / deltaTime);
                     oThis.msLastFrame = msCurrent;
                     oThis.callBack(deltaTime);
                 }
+
                 if (oThis.isActive) {
                     window.requestAnimationFrame(oThis.run);
                 }
