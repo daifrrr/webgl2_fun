@@ -5,12 +5,12 @@ let Primitives = {};
 export default Primitives;
 
 Primitives.Cube = class {
-    static createModal(gl) {
-        return new Modal(Primitives.Cube.createMesh(gl, 1, 1, 1, 0, 0, 0))
+    static createModal(gl, w, h, d, x, y, z) {
+        return new Modal(Primitives.Cube.createMesh(gl, w, h, d, x, y, z));
     }
 
     static createBasicCube(gl) {
-        this.createMesh(gl, 1, 1, 1, 1, 1, 1);
+        return new Modal(this.createMesh(gl, 1, 1, 1, 1, 1, 1));
     }
 
     static createMesh(gl, width, height, depth, x, y, z) {
