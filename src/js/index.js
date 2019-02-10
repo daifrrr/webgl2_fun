@@ -1,36 +1,47 @@
+/* CSS Import - canvas attributes */
 import '../css/style.css';
-import tex001 from '../resources/uv_grid_lrg.jpg';
-import vShader from '../shaders/vShader.glsl';
-import fShader from '../shaders/fShader.glsl';
-import GridShader from './GridShader';
+
+/* important program imports */
 import GLInstance from './gl';
-import RenderLoop from './RenderLoop';
 import Shader from './Shader';
-import Primitives from './Primitives';
+import RenderLoop from './RenderLoop';
+
+/* Camera and Controlls */
 import Camera from './Camera';
 import CameraController from './CameraController';
+
+/* all around the shaders */
+import GridShader from './GridShader';
+import vShader from '../shaders/vShader.glsl';
+import fShader from '../shaders/fShader.glsl';
+
+/* a bit of utility */
 import Utils from './Utils/Utils';
 
-let gl,
-    gRLoop,
-    gModal,
-    gModal2 = [],
-    gShader,
-    gGridShader,
-    gGridModal;
+/* Objects */
+import Primitives from './Primitives';
+
+let gl, gRLoop, gGridShader, gGridModal;
 let gCamera,
     gCameraControl;
+let gModal,
+    gModal2 = [],
+    gShader;
 
 
 window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fFitScreen(1, 1).fClear();
 
     gCamera = new Camera(gl);
-    gCamera.transform.position.set(0, 1, 100);
-    gCamera.transform.rotation.set(0, 45, 0);
+    gCamera.transform.position.set(0, 1, 0);
     gCameraControl = new CameraController(gl, gCamera);
 
     gl.fLoadTexture("tex001", document.getElementById("tex02Img"));
+    let tmp = [];
+    for(let i = 0; i < 6; i++) {
+        tmp[i] = document.getElementById("tex2Img");
+    }
+    gl.fLoadCubeTexture("texArray", tmp);
 
     gGridShader = new GridShader(gl, gCamera.projectionMatrix);
     gGridModal = Primitives.GridAxis.createModal(gl, true);
@@ -38,57 +49,24 @@ window.addEventListener('load', function () {
 
     gShader = new TestShader(gl, gCamera.projectionMatrix)
         .setTexture(gl.mTextureCache["tex001"]);
-    // gModal = Primitives.Cube.createModal(gl)
-    //     .setPosition(0, 0.15, 0)
-    //     .setScale(0.15, 0.15, 0.15);
-    for (let i = 0; i < 1000; i++) {
-        gModal2[i] = (i % 2 === 0) ?
-            Primitives.Cube.createBasicCube(gl) :
-            Primitives.Cube.createModal(gl, 4, 4, 4, 2, 2, 2);
-        gModal2[i].setPosition(
-            getRandomIntInclusive(-50, 50),
-            getRandomIntInclusive(-50, 50),
-            getRandomIntInclusive(-50, 50));
-    }
+    gModal = Primitives.Cube.createModal(gl, 25, 25, 25, 0, 0, 0);
 
 
     gRLoop = new RenderLoop(onRender, 60).start();
 });
 
-let pump = 0,
-    tmp = 1000;
-let min = (1 / Math.PI),
-    max = (2 * Math.PI);
-
 function onRender(dt) {
     gCamera.updateViewMatrix();
     gl.fClear();
-    /*gGridShader.activate()
+
+    gGridShader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
-        .renderModal(gGridModal.preRender());*/
-    pump += (1 / tmp);
-    if (pump >= 1e-2 || pump <= -1e-2) tmp *= -1;
-    // gShader.activate()
-    //     .setCameraMatrix(gCamera.viewMatrix)
-    //     .setTime(performance.now())
-    //     .renderModal(gModal
-    //         .addScale(
-    //             pump * (Math.random() * (max - min) + min),
-    //             pump * (Math.random() * (max - min) + min),
-    //             pump * (Math.random() * (max - min) + min))
-    //         .addRotation(0, 1.2, 0)
-    //         .preRender());
+        .renderModal(gGridModal.preRender());
 
-    gModal2.forEach(function (modal) {
-        gShader.activate()
-            .setCameraMatrix(gCamera.viewMatrix)
-            .renderModal(
-                modal
-                    .addRotation(getRandomIntInclusive(0, 12.5), getRandomIntInclusive(0, 25), getRandomIntInclusive(0, 45))
-                    .preRender()
-            )
-    });
-
+    gShader.activate()
+        .setCameraMatrix(gCamera.getTranslatelessMatrix())
+        .setTime(performance.now())
+        .renderModal(gModal.preRender());
 }
 
 class TestShader extends Shader {
@@ -128,10 +106,4 @@ class TestShader extends Shader {
 
         return this;
     }
-}
-
-function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

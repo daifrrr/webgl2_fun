@@ -116,6 +116,30 @@ export default function GLInstance(canvasID) {
         return tex;
     };
 
+    gl.fLoadCubeTexture = function(name, aImg) {
+        if(aImg.length !== 6) {
+            console.error('Cube map must have an image array of 6: ' + aImg + ' given');
+            return null;
+        }
+
+        let tex = this.createTexture();
+        this.bindTexture(this.TEXTURE_CUBE_MAP, tex);
+
+        for(let i = 0; i < 6; i++) {
+            this.texImage2D(this.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, this.RGBA, this.RGBA, this.UNSIGNED_BYTE, aImg[i]);
+        }
+
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_MAG_FILTER, this.LINEAR);
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_MIN_FILTER, this.LINEAR);
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_WRAP_S, this.CLAMP_TO_EDGE);
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_WRAP_T, this.CLAMP_TO_EDGE);
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_WRAP_R, this.CLAMP_TO_EDGE);
+
+        this.bindTexture(this.TEXTURE_CUBE_MAP, null);
+        this.mTextureCache[name] = tex;
+        return tex;
+    };
+
     gl.fSetSize = function (w, h) {
         this.canvas.style.width = w + "px";
         this.canvas.style.height = h + "px";

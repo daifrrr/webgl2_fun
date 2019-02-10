@@ -10,7 +10,7 @@ Primitives.Cube = class {
     }
 
     static createBasicCube(gl) {
-        return new Modal(this.createMesh(gl, 1, 1, 1, 1, 1, 1));
+        return new Modal(Primitives.Cube.createMesh(gl, 1, 1, 1, 1, 1, 1));
     }
 
     static createMesh(gl, width, height, depth, x, y, z) {

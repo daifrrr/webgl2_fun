@@ -16,7 +16,7 @@ out highp vec2 texCoord;
 vec3 warp(vec3 p){
 			//return p + 0.2 * abs(cos(uTime*0.002)) * a_norm;
 			//return p + 0.5 * abs(cos(uTime*0.003 + p.y)) * a_norm;
-			return p + 0.5 * abs(cos(uTime*0.003 + p.y + p.x + p.z)) * a_norm;
+			return p + 0.5 * abs(cos(uTime*0.01 + p.x + p.y + p.z)) * a_norm;
 		}
 
 

@@ -39,6 +39,12 @@ export default class Camera {
             this.transform.position.y += this.transform.forward[1] * v;
             this.transform.position.z += this.transform.forward[2] * v;
         }
+    };
+
+    getTranslatelessMatrix() {
+        let mat = new Float32Array(this.viewMatrix);
+        mat[12] = mat[13] = mat[14] = 0.0;
+        return mat;
     }
 
     //To have different modes of movements, this function handles the view matrix update for the transform object.

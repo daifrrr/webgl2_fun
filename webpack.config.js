@@ -1,4 +1,5 @@
 const path = require('path');
+const process = require('process');
 
 module.exports = {
     mode: 'development',
@@ -6,6 +7,10 @@ module.exports = {
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist')
+    },
+    devtool: 'inline-source-map',
+    devServer: {
+      contentBase: './dist'
     },
     module: {
         rules: [
@@ -25,7 +30,17 @@ module.exports = {
             {
                 test: /\.(png|svg|jpg|gif)$/,
                 use: [
-                    'file-loader'
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name(file) {
+                                if(process.env.MODE_ENV === 'developemt') {
+                                    return '[path][name].[ext]';
+                                }
+                                return '[hash].[ext]';
+                            },
+                        },
+                    },
                 ]
             }
         ]
