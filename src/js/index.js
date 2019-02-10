@@ -12,6 +12,7 @@ import CameraController from './CameraController';
 
 /* all around the shaders */
 import GridShader from './GridShader';
+import SkyboxShader from './SkyboxShader';
 import vShader from '../shaders/vShader.glsl';
 import fShader from '../shaders/fShader.glsl';
 
@@ -22,6 +23,7 @@ import Utils from './Utils/Utils';
 import Primitives from './Primitives';
 
 let gl, gRLoop, gGridShader, gGridModal;
+let gSkyboxShader, gSkyboxModal;
 let gCamera,
     gCameraControl;
 let gModal,
@@ -33,23 +35,30 @@ window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fFitScreen(1, 1).fClear();
 
     gCamera = new Camera(gl);
-    gCamera.transform.position.set(0, 1, 0);
+    gCamera.transform.position.set(0, 1, 3);
     gCameraControl = new CameraController(gl, gCamera);
 
     gl.fLoadTexture("tex001", document.getElementById("tex02Img"));
-    let tmp = [];
-    for(let i = 0; i < 6; i++) {
-        tmp[i] = document.getElementById("tex2Img");
-    }
-    gl.fLoadCubeTexture("texArray", tmp);
+    let tmp = [
+        document.getElementById("cube_right"),
+        document.getElementById("cube_left"),
+        document.getElementById("cube_top"),
+        document.getElementById("cube_bottom"),
+        document.getElementById("cube_back"),
+        document.getElementById("cube_front"),
+    ];
+    gl.fLoadCubeTexture("skybox", tmp);
 
-    gGridShader = new GridShader(gl, gCamera.projectionMatrix);
-    gGridModal = Primitives.GridAxis.createModal(gl, true);
+    // gGridShader = new GridShader(gl, gCamera.projectionMatrix);
+    // gGridModal = Primitives.GridAxis.createModal(gl);
 
+    gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
+        gl.mTextureCache["skybox"]);
+    gSkyboxModal = Primitives.Cube.createModal(gl, 25, 25, 25, 0, 0, 0);
 
     gShader = new TestShader(gl, gCamera.projectionMatrix)
         .setTexture(gl.mTextureCache["tex001"]);
-    gModal = Primitives.Cube.createModal(gl, 25, 25, 25, 0, 0, 0);
+    gModal = Primitives.Cube.createBasicCube(gl);
 
 
     gRLoop = new RenderLoop(onRender, 60).start();
@@ -59,12 +68,18 @@ function onRender(dt) {
     gCamera.updateViewMatrix();
     gl.fClear();
 
-    gGridShader.activate()
-        .setCameraMatrix(gCamera.viewMatrix)
-        .renderModal(gGridModal.preRender());
+    gSkyboxShader.activate().preRender()
+        .setCameraMatrix(gCamera.getTranslatelessMatrix())
+        .setTime(performance.now())
+        .renderModal(gSkyboxModal);
+
+
+    // gGridShader.activate()
+    //     .setCameraMatrix(gCamera.viewMatrix)
+    //     .renderModal(gGridModal.preRender());
 
     gShader.activate()
-        .setCameraMatrix(gCamera.getTranslatelessMatrix())
+        .setCameraMatrix(gCamera.viewMatrix)
         .setTime(performance.now())
         .renderModal(gModal.preRender());
 }

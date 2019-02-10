@@ -105,7 +105,7 @@ export default function GLInstance(canvasID) {
 
         // this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MAG_FILTER, this.LINEAR);
         // this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MIN_FILTER, this.LINEAR_MIPMAP_NEAREST);
-        //this.generateMipmap(this.TEXTURE_2D);
+        // this.generateMipmap(this.TEXTURE_2D);
 
         this.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 
