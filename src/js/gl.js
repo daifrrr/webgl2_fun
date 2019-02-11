@@ -95,23 +95,24 @@ export default function GLInstance(canvasID) {
 
     gl.fLoadTexture = function (name, img, doYFlip = false) {
         let tex = this.createTexture();
-        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 0);
+        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 1);
         this.bindTexture(this.TEXTURE_2D, tex);
-
-        this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-        // this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MAG_FILTER, this.LINEAR);
-        // this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MIN_FILTER, this.LINEAR_MIPMAP_NEAREST);
-        // this.generateMipmap(this.TEXTURE_2D);
-
         this.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 
+
+        // this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        // this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        // this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        // this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+        this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MAG_FILTER, this.LINEAR);
+        this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MIN_FILTER, this.LINEAR_MIPMAP_NEAREST);
+        this.generateMipmap(this.TEXTURE_2D);
+
+        //this.bindTexture(this.TEXTURE_2D,null);
         this.mTextureCache[name] = tex;
 
-        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 1);
+        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 0);
 
         return tex;
     };
