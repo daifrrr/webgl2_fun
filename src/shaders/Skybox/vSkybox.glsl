@@ -11,5 +11,5 @@ out highp vec3 texCoord;
 
 void main() {
     texCoord = a_position.xyz;
-    gl_Position = uPMatrix * uCameraMatrix * vec4(a_position.xyz, 1.0);
+    gl_Position = uPMatrix * uCameraMatrix * uMVMatrix * vec4(a_position.xyz, 1.0);
 }

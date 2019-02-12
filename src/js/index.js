@@ -57,20 +57,21 @@ window.addEventListener('load', function () {
 
     gl.fLoadTexture("F16", document.getElementById("f16-tex"), true);
 
-    // gGridShader = new GridShader(gl, gCamera.projectionMatrix);
-    // gGridModal = Primitives.GridAxis.createModal(gl);
+    gGridShader = new GridShader(gl, gCamera.projectionMatrix);
+    gGridModal = Primitives.GridAxis.createModal(gl, true);
 
     gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
         gl.mTextureCache["skybox"]);
-    gSkyboxModal = Primitives.Cube.createModal(gl, 25, 25, 25, 0, 0, 0);
+    gSkyboxModal = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
 
     // gShader = new TestShader(gl, gCamera.projectionMatrix)
     //     .setTexture(gl.mTextureCache["tex001"]);
     // gModal = Primitives.Cube.createBasicCube(gl);
 
-    gF16Shader = new F16Shader(gl, gCamera.projectionMatrix)
+    gF16 = Models.F16.createModal(gl)
+        .setPosition(0.2, 0, 0.2);
+    gF16Shader = new F16Shader(gl, gCamera.projectionMatrix, gF16.transform.getViewMatrix())
         .setTexture(gl.mTextureCache["F16"]);
-    gF16 = Models.F16.createModal(gl);
 
     gRLoop = new RenderLoop(onRender, 60).start();
 });
@@ -82,12 +83,12 @@ function onRender(dt) {
     gSkyboxShader.activate().preRender()
         .setCameraMatrix(gCamera.getTranslatelessMatrix())
         .setTime(performance.now())
-        .renderModal(gSkyboxModal);
+        .renderModal(gSkyboxModal.preRender());
 
 
-    // gGridShader.activate()
-    //     .setCameraMatrix(gCamera.viewMatrix)
-    //     .renderModal(gGridModal.preRender());
+    gGridShader.activate()
+        .setCameraMatrix(gCamera.viewMatrix)
+        .renderModal(gGridModal.preRender());
 
     // gShader.activate()
     //     .setCameraMatrix(gCamera.viewMatrix)
@@ -96,7 +97,10 @@ function onRender(dt) {
 
     gF16Shader.activate().preRender()
         .setCameraMatrix(gCamera.viewMatrix)
-        .renderModal(gF16.preRender());
+        .setTime(performance.now())
+        .renderModal(gF16
+            .addPosition( 1e-3 + Math.cos(performance.now()), 0, 1e-3 + Math.sin(performance.now()))
+            .preRender());
 }
 
 class TestShader extends Shader {
@@ -104,7 +108,6 @@ class TestShader extends Shader {
         super(gl, vShader, fShader);
 
         this.uniformLoc.time = gl.getUniformLocation(this.program, "uTime");
-
         let uColor = gl.getUniformLocation(this.program, "uColor");
         gl.uniform3fv(uColor, new Float32Array(Utils.rgbHexToFloat(
             "#FF0000",
@@ -139,12 +142,22 @@ class TestShader extends Shader {
 }
 
 class F16Shader extends Shader {
-    constructor(gl, pMatrix) {
+    constructor(gl, pMatrix, mMatrix) {
         super(gl, vF16Shader, fF16Shader);
+
+        this.uniformLoc.time = gl.getUniformLocation(this.program, "uTime");
+        let uNormMatrix = gl.getUniformLocation(this.program, "uNormMatrix");
+        gl.uniformMatrix4fv(uNormMatrix, true, mMatrix);
 
         this.setPerspective(pMatrix);
 
         gl.useProgram(null);
+    }
+
+    setTime(t) {
+        console.log(t);
+        this.gl.uniform1f(this.uniformLoc.time, t);
+        return this;
     }
 
     setTexture(texID) {
@@ -153,6 +166,7 @@ class F16Shader extends Shader {
     }
 
     preRender() {
+
         this.gl.activeTexture(this.gl.TEXTURE1);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.mainTexture);
         this.gl.uniform1i(this.uniformLoc.mainTexture, 0);

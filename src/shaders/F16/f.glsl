@@ -2,6 +2,8 @@
 precision mediump float;
 
 in vec4 color;
+in vec3 norm;
+in vec3 light;
 
 in highp vec2 texCoord;
 uniform sampler2D uMainTex;
@@ -9,5 +11,21 @@ uniform sampler2D uMainTex;
 out vec4 finalColor;
 
 void main() {
-    finalColor = texture(uMainTex, texCoord);
+    vec4 texelColor = texture(uMainTex, texCoord);
+    finalColor = vec4(texelColor.rgb * light, texelColor.a);
 }
+
+/*
+
+    vec2 vTextureCoord;
+    vec3 vLighting;
+
+          uniform sampler2D uSampler;
+
+          void main(void) {
+            vec4 texelColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+
+            gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+          }
+
+*/
