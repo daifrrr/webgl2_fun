@@ -23,7 +23,7 @@ void main() {
     vec3 ambientLight = vec3(0.25, 0.25, 0.25);
     vec3 directionalLightColor = vec3(0.2, 0.2, 0.2);
     float tmp = a_position.y;
-    vec3 directionalVector = vec3(5.0 * cos(0.002 * uTime), tmp,5.0 * sin(0.002 * uTime));
+    vec3 directionalVector = vec3(5.0 * cos(0.002 * uTime), 2,5.0 * sin(0.002 * uTime));
 
     vec4 transformedNormal = uNormMatrix * vec4(a_norm, 1.0);
 

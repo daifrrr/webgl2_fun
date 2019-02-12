@@ -38,7 +38,7 @@ let gModal,
 
 
 window.addEventListener('load', function () {
-    gl = GLInstance('glCanvas').fFitScreen(1, 1).fClear();
+    gl = GLInstance('glCanvas').fFitScreen(0.8, 1).fClear();
 
     gCamera = new Camera(gl);
     gCamera.transform.position.set(0, 1, 3);
@@ -69,8 +69,8 @@ window.addEventListener('load', function () {
     // gModal = Primitives.Cube.createBasicCube(gl);
 
     gF16 = Models.F16.createModal(gl)
-        .setPosition(0.2, 0, 0.2);
-    gF16Shader = new F16Shader(gl, gCamera.projectionMatrix, gF16.transform.getViewMatrix())
+        .setPosition(2, 0, 2);
+    gF16Shader = new F16Shader(gl, gCamera.projectionMatrix, gF16.transform.getNormalMatrix())
         .setTexture(gl.mTextureCache["F16"]);
 
     gRLoop = new RenderLoop(onRender, 60).start();
@@ -95,11 +95,12 @@ function onRender(dt) {
     //     .setTime(performance.now())
     //     .renderModal(gModal.preRender());
 
-    gF16Shader.activate().preRender()
+    gF16Shader.activate()
         .setCameraMatrix(gCamera.viewMatrix)
         .setTime(performance.now())
         .renderModal(gF16
-            .addPosition( 1e-3 + Math.cos(performance.now()), 0, 1e-3 + Math.sin(performance.now()))
+            .setPosition(2, 0, 2)
+            .addRotation(0, Math.PI, 0)
             .preRender());
 }
 
@@ -147,7 +148,7 @@ class F16Shader extends Shader {
 
         this.uniformLoc.time = gl.getUniformLocation(this.program, "uTime");
         let uNormMatrix = gl.getUniformLocation(this.program, "uNormMatrix");
-        gl.uniformMatrix4fv(uNormMatrix, true, mMatrix);
+        gl.uniformMatrix4fv(uNormMatrix, false, mMatrix);
 
         this.setPerspective(pMatrix);
 
