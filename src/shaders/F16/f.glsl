@@ -12,7 +12,7 @@ out vec4 finalColor;
 
 void main() {
     vec4 texelColor = texture(uMainTex, texCoord);
-    finalColor = vec4(texelColor.rgb * light, texelColor.a);
+    finalColor = vec4(texelColor.rgb * light, 1.0);
 }
 
 /*
