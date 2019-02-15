@@ -18,7 +18,7 @@ export default function GLInstance(canvasID) {
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); //Setup Default Alpha Blending
 
 
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    gl.clearColor(0, 0, 0, 1.0);
 
     gl.fClear = function () {
         this.clear(this.COLOR_BUFFER_BIT | this.DEPTH_BUFFER_BIT);

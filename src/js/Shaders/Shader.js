@@ -1,4 +1,4 @@
-import ShaderUtil from './shaderUtil';
+import ShaderUtil from './ShaderUtil';
 
 export default class Shader {
 

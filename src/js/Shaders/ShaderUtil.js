@@ -1,4 +1,4 @@
-import cfg from '../config/config';
+import cfg from '../../config/config';
 
 export default class shaderUtil {
 
@@ -47,10 +47,10 @@ export default class shaderUtil {
         return program;
     }
 
-    static getShaderProgram(gl, vertID, fragID) {
+    static getShaderProgram(gl, vertID, fragID, doValidate = false) {
         let vShader = this.createShader(gl, vertID, gl.VERTEX_SHADER);
         let fShader = this.createShader(gl, fragID, gl.FRAGMENT_SHADER);
-        return this.createProgram(gl, vShader, fShader, true);
+        return this.createProgram(gl, vShader, fShader, doValidate);
     }
 
     static getStandardAttribLocations(gl,program){

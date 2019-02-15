@@ -1,6 +1,6 @@
 import Transform from './Transform';
 
-export default class Modal {
+export default class Model {
 	constructor(meshData){
 		this.transform = new Transform();
 		this.mesh = meshData;

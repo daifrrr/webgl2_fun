@@ -1,13 +1,13 @@
-import Modal from "./Modal";
+import Model from './Model';
 import f16 from '../../tutorial/f16-model';
 import expandVertexData from '../../node_modules/expand-vertex-data/src/expand-vertex-data';
 
-let Model = {};
-export default Model;
+let Entity = {};
+export default Entity;
 
-Model.F16 = class {
-    static createModal(gl) {
-        return new Modal(Model.F16.createMesh(gl));
+Entity.F16 = class {
+    static createEntity(gl) {
+        return new Model(Entity.F16.createMesh(gl));
     }
 
     static createMesh(gl) {

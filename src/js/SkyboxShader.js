@@ -1,6 +1,6 @@
 import vShader from '../shaders/Skybox/vSkybox.glsl';
 import fShader from '../shaders/Skybox/fSkybox.glsl';
-import Shader from "./Shader";
+import Shader from "./Shaders/Shader";
 
 
 export default class SkyboxShader extends Shader {

@@ -1,5 +1,5 @@
-import {Matrix4} from "./Utils/Math";
-import Transform from "./Transform";
+import {Matrix4} from "../Utils/Math";
+import Transform from "../Transform";
 
 export default class Camera {
     constructor(gl, fov, near, far) {
