@@ -23,7 +23,7 @@ export default class ShaderBuilder {
 
         let loc = 0;
         for (let i = 0; i < arguments.length; i += 2) {
-            loc = gl.getUniformLocation(this.program, arguments[i]);
+            loc = this.gl.getUniformLocation(this.program, arguments[i]);
             if (loc !== null) this.mUniformList[arguments[i]] = {loc: loc, type: arguments[i + 1]};
         }
         return this;
@@ -43,7 +43,7 @@ export default class ShaderBuilder {
                 continue;
             }
 
-            loc = gl.getUniformLocation(this.program, arguments[i]);
+            loc = this.gl.getUniformLocation(this.program, arguments[i]);
             if (loc !== null) this.mTextureList.push({loc: loc, tex: tex});
         }
         return this;
@@ -125,7 +125,7 @@ export default class ShaderBuilder {
         if (model.mesh.noCulling || this.noCulling) this.gl.disable(this.gl.CULL_FACE);
         if (model.mesh.doBlending || this.doBlending) this.gl.enable(this.gl.BLEND);
 
-        if (model.mesh.indexCount) this.gl.drawElements(model.mesh.drawMode, model.mesh.indexCount, gl.UNSIGNED_SHORT, 0);
+        if (model.mesh.indexCount) this.gl.drawElements(model.mesh.drawMode, model.mesh.indexCount, this.gl.UNSIGNED_SHORT, 0);
         else this.gl.drawArrays(model.mesh.drawMode, 0, model.mesh.vertexCount);
 
         this.gl.bindVertexArray(null);

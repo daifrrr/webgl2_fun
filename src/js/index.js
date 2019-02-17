@@ -26,19 +26,17 @@ import Utils from './Utils/Utils';
 
 /* Objects */
 import Primitives from './Primitives';
-import Entity from './Entities';
+import Entity from './Entity';
+import ResourceLoader from "../resources/ResourceLoader";
+import ShaderBuilder from "./Shaders/ShaderBuilder";
 
 
-let gl, gRLoop, gGridShader, gGridModal;
-let gSkyboxShader, gSkyboxModal;
-let gCamera,
-    gCameraControl;
-let gModal,
-    /* *** */
-    gModal2 = [],
-    gF16,
-    gF16Shader,
-    gShader;
+let gl, gRLoop;
+let gGridShader, gGridModel;
+let gSkyboxShader, gSkyboxModel;
+let gCamera, gCameraControl;
+let gTestModel, gTestShader;
+let gF16, gF16Shader;
 let mDebug;
 
 
@@ -49,6 +47,7 @@ window.addEventListener('load', function () {
     gCamera.transform.position.set(0, 0, 3);
     gCameraControl = new CameraController(gl, gCamera);
 
+    gRLoop = new RenderLoop(onRender, 60);
 
     let skyboxImages = [
         document.getElementById("cube_right"),
@@ -59,7 +58,7 @@ window.addEventListener('load', function () {
         document.getElementById("cube_front"),
     ];
     gl.fLoadCubeTexture("Skybox", skyboxImages);
-    gl.fLoadTexture("F16", document.getElementById("f16-tex"), true);
+    // gl.fLoadTexture("F16", document.getElementById("f16-tex"), true);
 
 
     // gGridShader = new GridShader(gl, gCamera.projectionMatrix);
@@ -67,21 +66,29 @@ window.addEventListener('load', function () {
 
     gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
         gl.mTextureCache["Skybox"]);
-    gSkyboxModal = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
-
-
-    gModal = Entity.F16.createEntity(gl)
-        .setPosition(0.25, 0, 0);
-    gShader = new TestShader(gl, gCamera.projectionMatrix)
-        .setTexture(gl.mTextureCache["F16"]);
+    gSkyboxModel = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
 
     mDebug = new DebugHelper.Dot(gl, 10)
         .addColor('#000000')
         .addPoint(0,0,0,0)
         .finalize();
-
-    gRLoop = new RenderLoop(onRender, 60).start();
+    ResourceLoader.setup(gl,onReady).loadTexture("tex001", "./uv_grid_lrg.jpg").start();
 });
+
+function onReady() {
+
+    // gTestShader = new TestShader(gl, gCamera.projectionMatrix)
+    //     .setTexture(gl.mTextureCache["F16"]);
+
+    gTestShader = new ShaderBuilder(gl,vShader, fShader)
+        .prepareUniforms("uPMatrix","mat4","uMVMatrix","mat4","uCameraMatrix","mat4")
+        .prepareTextures("uTexture","tex001")
+        .setUniforms("uPMatrix",gCamera.projectionMatrix);
+    gTestModel = Primitives.Cube.createBasicCube(gl)
+        .setPosition(0.25, 0, 0);
+
+    gRLoop.start();
+}
 
 let radius = 2.2,
     angle = 0,
@@ -96,11 +103,13 @@ function onRender(dt) {
     gSkyboxShader.activate().preRender()
         .setCameraMatrix(gCamera.getTranslatelessMatrix())
         .setTime(performance.now())
-        .renderModal(gSkyboxModal.preRender());
+        .renderModel(gSkyboxModel.preRender());
 
-    // gGridShader.activate()
-    //      .setCameraMatrix(gCamera.viewMatrix)
-    //      .renderModal(gGridModal.preRender());
+    /* Grid
+    gGridShader.activate()
+          .setCameraMatrix(gCamera.viewMatrix)
+          .renderModel(gGridModal.preRender());
+    */
 
     angle += angleInc * dt;
     yPos += yPosInc * dt;
@@ -109,18 +118,10 @@ function onRender(dt) {
         Dz = radius * Math.sin(angle);
         mDebug.transform.position.set(Dx, 0 ,Dz);
 
-    let x = 0.25 * Math.cos(angle),
-        z = 0.25 * Math.sin(angle);
-    // gModal.transform.position.set(-x, 0, -z);
+    // gTestModel.transform.position.set(-x, 0, -z);
 
-    gShader.activate().preRender()
-        .setCameraMatrix(gCamera.viewMatrix)
-        .setCameraPosition(gCamera)
-        .setLightPosition(mDebug)
-        .renderModal(gModal
-            .setPosition(x, 0, z)
-            // .addRotation(0, 0, Math.cos(angle) - Math.sin(angle * dt))
-            .preRender());
+    gTestShader.preRender("uCameraMatrix",gCamera.viewMatrix)
+        .renderModel(gTestModel.preRender());
 
 
     mDebug.render(gCamera);
@@ -167,9 +168,9 @@ class TestShader extends Shader {
         return this;
     }
 
-    renderModal(modal) {
-        this.gl.uniformMatrix3fv(this.uniformLoc.matNormal, false, modal.transform.getNormalMatrix());
-        super.renderModal(modal);
+    renderModel(model) {
+        this.gl.uniformMatrix3fv(this.uniformLoc.matNormal, false, model.transform.getNormalMatrix());
+        super.renderModel(model);
         return this;
     }
 }

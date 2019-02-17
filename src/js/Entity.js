@@ -1,7 +1,8 @@
 import Model from './Model';
-import f16 from '../../tutorial/f16-model';
+import f16 from '../objects/f16-model';
 import expandVertexData from '../../node_modules/expand-vertex-data/src/expand-vertex-data';
 
+/* refactor when we get more than one object */
 let Entity = {};
 export default Entity;
 
