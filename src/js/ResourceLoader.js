@@ -12,7 +12,6 @@ export default class ResourceLoader {
     }
 
     static loadTexture(name, src) {
-        console.log(name, src);
         for(let i = 0; i < arguments.length; i+=2) {
             ResourceLoader.Queue.push({type:"img",name:arguments[i],src:arguments[i+1]});
         }
@@ -34,8 +33,8 @@ export default class ResourceLoader {
             case "img":
                 let img = new Image();
                 img.queueData = item;
-                img.load = ResourceLoader.onDownloadSuccess;
-                img.abort = img.onerror = ResourceLoader.onDownloadError;
+                img.onload = ResourceLoader.onDownloadSuccess;
+                img.onabort = img.onerror = ResourceLoader.onDownloadError;
                 img.src = item.src;
                 break;
         }
@@ -44,7 +43,7 @@ export default class ResourceLoader {
     static onDownloadSuccess() {
         if(this instanceof Image) {
             let data = this.queueData;
-            console.log(this.queueData);
+            console.log(this);
             ResourceLoader.gl.fLoadTexture(data.name,this);
         }
         ResourceLoader.loadNextItem();

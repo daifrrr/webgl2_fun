@@ -1,6 +1,9 @@
 /* CSS Import - canvas attributes */
 import '../css/style.css';
 
+/* Image Import */
+import uv_grid_lrg from '../resources/uv_grid_lrg.jpg';
+
 /* important program imports */
 import GLInstance from './gl';
 import Shader from './Shaders/Shader';
@@ -27,8 +30,9 @@ import Utils from './Utils/Utils';
 /* Objects */
 import Primitives from './Primitives';
 import Entity from './Entity';
-import ResourceLoader from "../resources/ResourceLoader";
 import ShaderBuilder from "./Shaders/ShaderBuilder";
+
+import ResourceLoader from "./ResourceLoader";
 
 
 let gl, gRLoop;
@@ -69,10 +73,10 @@ window.addEventListener('load', function () {
     gSkyboxModel = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
 
     mDebug = new DebugHelper.Dot(gl, 10)
-        .addColor('#000000')
+        .addColor('#F000F0')
         .addPoint(0,0,0,0)
         .finalize();
-    ResourceLoader.setup(gl,onReady).loadTexture("tex001", "./uv_grid_lrg.jpg").start();
+    ResourceLoader.setup(gl, onReady).loadTexture("tex001", uv_grid_lrg).start();
 });
 
 function onReady() {

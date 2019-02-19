@@ -6,7 +6,7 @@ module.exports = {
     entry: './src/js/index.js',
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve('dist')
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -33,14 +33,10 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                            name(file) {
-                                if(process.env.MODE_ENV === 'developemt') {
-                                    return '[path][name].[ext]';
-                                }
-                                return '[hash].[ext]';
-                            },
-                        },
-                    },
+                            name: '[name].[ext]',
+                            publicPath: '../src/resources'
+                        }
+                    }
                 ]
             }
         ]
