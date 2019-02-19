@@ -2,7 +2,7 @@
 import '../css/style.css';
 
 /* Image Import */
-import uv_grid_lrg from '../resources/uv_grid_lrg.jpg';
+import f16texture from '../resources/f16-texture.bmp';
 
 /* important program imports */
 import GLInstance from './gl';
@@ -43,12 +43,11 @@ let gTestModel, gTestShader;
 let gF16, gF16Shader;
 let mDebug;
 
-
 window.addEventListener('load', function () {
     gl = GLInstance('glCanvas').fFitScreen(1.0, 1.0).fClear();
 
     gCamera = new Camera(gl);
-    gCamera.transform.position.set(0, 0, 3);
+    gCamera.transform.position.set(0, 1, 3);
     gCameraControl = new CameraController(gl, gCamera);
 
     gRLoop = new RenderLoop(onRender, 60);
@@ -70,13 +69,13 @@ window.addEventListener('load', function () {
 
     gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
         gl.mTextureCache["Skybox"]);
-    gSkyboxModel = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
+    gSkyboxModel = Primitives.Cube.createModal(gl, 10, 10, 10, 0, 0, 0);
 
     mDebug = new DebugHelper.Dot(gl, 10)
         .addColor('#F000F0')
-        .addPoint(0,0,0,0)
+        .addPoint(0, 0, 0, 0)
         .finalize();
-    ResourceLoader.setup(gl, onReady).loadTexture("tex001", uv_grid_lrg).start();
+    ResourceLoader.setup(gl, onReady).loadTexture("f16", f16texture, true).start();
 });
 
 function onReady() {
@@ -84,30 +83,32 @@ function onReady() {
     // gTestShader = new TestShader(gl, gCamera.projectionMatrix)
     //     .setTexture(gl.mTextureCache["F16"]);
 
-    gTestShader = new ShaderBuilder(gl,vShader, fShader)
-        .prepareUniforms("uPMatrix","mat4","uMVMatrix","mat4","uCameraMatrix","mat4")
-        .prepareTextures("uTexture","tex001")
-        .setUniforms("uPMatrix",gCamera.projectionMatrix);
-    gTestModel = Primitives.Cube.createBasicCube(gl)
-        .setPosition(0.25, 0, 0);
+    gTestShader = new ShaderBuilder(gl, vShader, fShader)
+        .prepareUniforms("uPMatrix", "mat4", "uMVMatrix", "mat4", "uCameraMatrix", "mat4", "uLightPosition", "3fv")
+        .prepareTextures("uTexture", "f16")
+        .setUniforms("uPMatrix", gCamera.projectionMatrix);
+    gTestModel = Entity.F16.createEntity(gl)
+        .setPosition(0, 0, 0);
 
     gRLoop.start();
 }
 
-let radius = 2.2,
+let radius = 19.5,
     angle = 0,
     angleInc = 1,
     yPos = 0,
     yPosInc = 0.2;
-
 function onRender(dt) {
     gCamera.updateViewMatrix();
     gl.fClear();
+    gSkyboxShader.noCulling = true;
+
 
     gSkyboxShader.activate().preRender()
         .setCameraMatrix(gCamera.getTranslatelessMatrix())
         .setTime(performance.now())
-        .renderModel(gSkyboxModel.preRender());
+        .renderModel(gSkyboxModel
+            .preRender());
 
     /* Grid
     gGridShader.activate()
@@ -120,11 +121,12 @@ function onRender(dt) {
 
     let Dx = radius * Math.cos(angle),
         Dz = radius * Math.sin(angle);
-        mDebug.transform.position.set(Dx, 0 ,Dz);
-
+    mDebug.transform.position.set(Dx, 0, Dz);
     // gTestModel.transform.position.set(-x, 0, -z);
 
-    gTestShader.preRender("uCameraMatrix",gCamera.viewMatrix)
+    gTestShader.preRender(
+        "uCameraMatrix", gCamera.viewMatrix,
+        "uLightPosition", mDebug.transform.position.getArray())
         .renderModel(gTestModel.preRender());
 
 

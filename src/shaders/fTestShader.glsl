@@ -28,9 +28,10 @@ void main() {
 
     //specular
     float specularStrength = 0.2;
-    float specularShininess = 512.0;
+    float specularShininess = 1.0;
     vec3 camDir = normalize(vCamPos - vPos);
     vec3 reflectDir = reflect(-lightDir, vNorm);
+
     float spec = pow(max(dot(reflectDir,camDir), 0.0), specularShininess);
     vec3 colorSpecular = specularStrength * spec * colorLight;
 
