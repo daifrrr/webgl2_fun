@@ -22,7 +22,7 @@ export default class Transform {
             .vrotateY(this.rotation.y * Transform.deg2Rad)
             .vscale(this.scale);
 
-        Matrix4.normalMat3(this.matNormal, this.matView);
+        Matrix4.normalMat3(this.matNormal, this.matView.raw);
 
         Matrix4.transformVec4(this.forward, [0, 0, 1, 0], this.matView.raw);
         Matrix4.transformVec4(this.up, [0, 1, 0, 0], this.matView.raw);

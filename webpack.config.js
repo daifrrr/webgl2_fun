@@ -1,11 +1,16 @@
 const path = require('path');
+const process = require('process');
 
 module.exports = {
     mode: 'development',
     entry: './src/js/index.js',
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve('dist')
+    },
+    devtool: 'inline-source-map',
+    devServer: {
+      contentBase: './dist'
     },
     module: {
         rules: [
@@ -25,7 +30,13 @@ module.exports = {
             {
                 test: /\.(png|svg|jpg|gif)$/,
                 use: [
-                    'file-loader'
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            publicPath: '../src/resources'
+                        }
+                    }
                 ]
             }
         ]

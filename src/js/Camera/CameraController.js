@@ -53,7 +53,7 @@ export default class CameraController {
     }
 
     onMouseWheel(e) {
-        let delta = Math.max(-1, Math.min(1, (e.deltaY || -e.deltaY))) * 0.1; //Try to map wheel movement to a number between -1 and 1
+        let delta = Math.max(-1, Math.min(1, (e.deltaY || -e.deltaY))) * 0.5; //Try to map wheel movement to a number between -1 and 1
         this.camera.panZ(delta * (this.zoomRate / this.canvas.height));//Keep the movement speed the same, no matter the height diff;
     }
 

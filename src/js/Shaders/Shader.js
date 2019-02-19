@@ -1,4 +1,4 @@
-import ShaderUtil from './shaderUtil';
+import ShaderUtil from './ShaderUtil';
 
 export default class Shader {
 
@@ -24,7 +24,7 @@ export default class Shader {
     }
 
     setPerspective(matData){	this.gl.uniformMatrix4fv(this.uniformLoc.perspective, false, matData); return this; }
-    setModalMatrix(matData){	this.gl.uniformMatrix4fv(this.uniformLoc.modalMatrix, false, matData); return this; }
+    setModelMatrix(matData){	this.gl.uniformMatrix4fv(this.uniformLoc.modalMatrix, false, matData); return this; }
     setCameraMatrix(matData){	this.gl.uniformMatrix4fv(this.uniformLoc.cameraMatrix, false, matData); return this; }
 
     dispose() {
@@ -36,23 +36,23 @@ export default class Shader {
 
     preRender(){}
 
-    renderModal(modal) {
-        this.setModalMatrix(modal.transform.getViewMatrix());
-        this.gl.bindVertexArray(modal.mesh.vao);
+    renderModel(model) {
+        this.setModelMatrix(model.transform.getViewMatrix());
+        this.gl.bindVertexArray(model.mesh.vao);
 
-        if(modal.mesh.noCulling) this.gl.disable(this.gl.CULL_FACE);
-        if(modal.mesh.doBlending) this.gl.enable(this.gl.BLEND);
+        if(model.mesh.noCulling) this.gl.disable(this.gl.CULL_FACE);
+        if(model.mesh.doBlending) this.gl.enable(this.gl.BLEND);
 
 
-        if(modal.mesh.indexCount) {
-            this.gl.drawElements(modal.mesh.drawMode, modal.mesh.indexCount, this.gl.UNSIGNED_SHORT, 0);
+        if(model.mesh.indexCount) {
+            this.gl.drawElements(model.mesh.drawMode, model.mesh.indexCount, this.gl.UNSIGNED_SHORT, 0);
         } else {
-            this.gl.drawArrays(modal.mesh.drawMode, 0, modal.mesh.vertexCount);
+            this.gl.drawArrays(model.mesh.drawMode, 0, model.mesh.vertexCount);
         }
         this.gl.bindVertexArray(null);
 
-        if(modal.mesh.noCulling) this.gl.enable(this.gl.CULL_FACE);
-        if(modal.mesh.doBlending) this.gl.disable(this.gl.BLEND);
+        if(model.mesh.noCulling) this.gl.enable(this.gl.CULL_FACE);
+        if(model.mesh.doBlending) this.gl.disable(this.gl.BLEND);
 
         return this;
     }

@@ -20,3 +20,12 @@ div {
     align-items: center;
     justify-content: center;
 }
+
+.output {
+    display: inline-block;
+    align-items: center;
+}
+
+img {
+    display: none;
+}

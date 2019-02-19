@@ -1,6 +1,6 @@
 import vGShader from '../shaders/Grid/vGShader.glsl';
 import fGShader from '../shaders/Grid/fGShader.glsl';
-import Shader from './Shader';
+import Shader from './Shaders/Shader';
 
 export default class GridAxisShader extends Shader {
     constructor(gl, pMatrix) {

@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --progress",
+    "start": "webpack-dev-server --open",
     "watch": "webpack --watch --progress"
   },
   "keywords": [],
@@ -13,12 +14,15 @@
   "license": "ISC",
   "devDependencies": {
     "css-loader": "^2.1.0",
+    "expand-vertex-data": "^1.1.2",
     "file-loader": "^3.0.1",
     "gl-matrix": "^3.0.0",
     "json-loader": "^0.5.7",
     "raw-loader": "^1.0.0",
     "style-loader": "^0.23.1",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1"
+    "wavefront-obj-parser": "^2.0.1",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.1.14"
   }
 }

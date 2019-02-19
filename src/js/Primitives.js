@@ -1,16 +1,16 @@
 import cfg from '../config/config';
-import Modal from './Modal';
+import Model from './Model';
 
 let Primitives = {};
 export default Primitives;
 
 Primitives.Cube = class {
     static createModal(gl, w, h, d, x, y, z) {
-        return new Modal(Primitives.Cube.createMesh(gl, w, h, d, x, y, z));
+        return new Model(Primitives.Cube.createMesh(gl, w, h, d, x, y, z));
     }
 
     static createBasicCube(gl) {
-        return new Modal(this.createMesh(gl, 1, 1, 1, 1, 1, 1));
+        return new Model(Primitives.Cube.createMesh(gl, 1, 1, 1, 0, 0, 0));
     }
 
     static createMesh(gl, width, height, depth, x, y, z) {
@@ -73,7 +73,7 @@ Primitives.Cube = class {
 
 Primitives.Quad = class {
     static createModal(gl) {
-        return new Modal(Primitives.Quad.createMesh(gl))
+        return new Model(Primitives.Quad.createMesh(gl))
     }
 
     static createMesh(gl) {
@@ -103,7 +103,7 @@ Primitives.Quad = class {
 
 Primitives.GridAxis = class {
     static createModal(gl, incAxis) {
-        return new Modal(Primitives.GridAxis.createMesh(gl, incAxis));
+        return new Model(Primitives.GridAxis.createMesh(gl, incAxis));
     }
 
     static createMesh(gl, incAxis) {

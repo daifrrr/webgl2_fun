@@ -18,7 +18,7 @@ export default function GLInstance(canvasID) {
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); //Setup Default Alpha Blending
 
 
-    gl.clearColor(1.0, 1.0, 1.0, 1.0);
+    gl.clearColor(0, 0, 0, 1.0);
 
     gl.fClear = function () {
         this.clear(this.COLOR_BUFFER_BIT | this.DEPTH_BUFFER_BIT);
@@ -95,24 +95,49 @@ export default function GLInstance(canvasID) {
 
     gl.fLoadTexture = function (name, img, doYFlip = false) {
         let tex = this.createTexture();
-        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 0);
+        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 1);
         this.bindTexture(this.TEXTURE_2D, tex);
-
-        this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-        // this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MAG_FILTER, this.LINEAR);
-        // this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MIN_FILTER, this.LINEAR_MIPMAP_NEAREST);
-        //this.generateMipmap(this.TEXTURE_2D);
-
         this.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 
+
+        // this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        // this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        // this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        // this.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+        this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MAG_FILTER, this.LINEAR);
+        this.texParameteri(this.TEXTURE_2D, this.TEXTURE_MIN_FILTER, this.LINEAR_MIPMAP_NEAREST);
+        this.generateMipmap(this.TEXTURE_2D);
+
+        //this.bindTexture(this.TEXTURE_2D,null);
         this.mTextureCache[name] = tex;
 
-        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 1);
+        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 0);
 
+        return tex;
+    };
+
+    gl.fLoadCubeTexture = function(name, aImg) {
+        if(aImg.length !== 6) {
+            console.error('Cube map must have an image array of 6: ' + aImg + ' given');
+            return null;
+        }
+
+        let tex = this.createTexture();
+        this.bindTexture(this.TEXTURE_CUBE_MAP, tex);
+
+        for(let i = 0; i < 6; i++) {
+            this.texImage2D(this.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, this.RGBA, this.RGBA, this.UNSIGNED_BYTE, aImg[i]);
+        }
+
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_MAG_FILTER, this.LINEAR);
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_MIN_FILTER, this.LINEAR);
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_WRAP_S, this.CLAMP_TO_EDGE);
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_WRAP_T, this.CLAMP_TO_EDGE);
+        this.texParameteri(this.TEXTURE_CUBE_MAP, this.TEXTURE_WRAP_R, this.CLAMP_TO_EDGE);
+
+        this.bindTexture(this.TEXTURE_CUBE_MAP, null);
+        this.mTextureCache[name] = tex;
         return tex;
     };
 
