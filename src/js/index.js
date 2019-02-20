@@ -3,6 +3,8 @@ import '../css/style.css';
 
 /* Image Import */
 import f16texture from '../resources/f16-texture.bmp';
+import mask_square from '../resources/mask_square.png';
+import mask_conercircles from '../resources/mask_cornercircles.png';
 
 /* important program imports */
 import GLInstance from './gl';
@@ -23,6 +25,8 @@ import vShader from '../shaders/vTestShader.glsl';
 import fShader from '../shaders/fTestShader.glsl';
 import vF16Shader from '../shaders/F16/v.glsl';
 import fF16Shader from '../shaders/F16/f.glsl';
+import vMaskShader from '../shaders/Mask/vMaskShader.glsl';
+import fMaskShader from '../shaders/Mask/fMaskShader.glsl';
 
 /* a bit of utility */
 import Utils from './Utils/Utils';
@@ -69,13 +73,15 @@ window.addEventListener('load', function () {
 
     gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
         gl.mTextureCache["Skybox"]);
-    gSkyboxModel = Primitives.Cube.createModal(gl, 10, 10, 10, 0, 0, 0);
+    gSkyboxModel = Primitives.Cube.createModal(gl, 25, 25, 25, 0, 0, 0);
 
     mDebug = new DebugHelper.Dot(gl, 10)
         .addColor('#F000F0')
         .addPoint(0, 0, 0, 0)
         .finalize();
-    ResourceLoader.setup(gl, onReady).loadTexture("f16", f16texture, true).start();
+    ResourceLoader.setup(gl, onReady).loadTexture(
+        "mask_a", mask_square,
+        "mask_b", mask_conercircles).start();
 });
 
 function onReady() {
@@ -83,21 +89,26 @@ function onReady() {
     // gTestShader = new TestShader(gl, gCamera.projectionMatrix)
     //     .setTexture(gl.mTextureCache["F16"]);
 
-    gTestShader = new ShaderBuilder(gl, vShader, fShader)
-        .prepareUniforms("uPMatrix", "mat4", "uMVMatrix", "mat4", "uCameraMatrix", "mat4", "uLightPosition", "3fv")
-        .prepareTextures("uTexture", "f16")
-        .setUniforms("uPMatrix", gCamera.projectionMatrix);
-    gTestModel = Entity.F16.createEntity(gl)
+    gTestShader = new ShaderBuilder(gl, vMaskShader, fMaskShader)
+        .prepareUniforms("uPMatrix", "mat4", "uMVMatrix", "mat4", "uCameraMatrix", "mat4", "uColors", "3fv")
+        .prepareTextures("uMask_A", "mask_a", "uMask_B", "mask_b")
+        .setUniforms("uPMatrix", gCamera.projectionMatrix,
+            "uColors", Utils.rgbHexToFloat(
+                "#880000",
+                "#ff0c0c"
+            ));
+    gTestModel = Primitives.Cube.createBasicCube(gl)
         .setPosition(0, 0, 0);
 
     gRLoop.start();
 }
 
-let radius = 19.5,
+let radius = 1.5,
     angle = 0,
     angleInc = 1,
     yPos = 0,
     yPosInc = 0.2;
+
 function onRender(dt) {
     gCamera.updateViewMatrix();
     gl.fClear();
@@ -124,10 +135,8 @@ function onRender(dt) {
     mDebug.transform.position.set(Dx, 0, Dz);
     // gTestModel.transform.position.set(-x, 0, -z);
 
-    gTestShader.preRender(
-        "uCameraMatrix", gCamera.viewMatrix,
-        "uLightPosition", mDebug.transform.position.getArray())
-        .renderModel(gTestModel.preRender());
+    gTestShader.preRender("uCameraMatrix", gCamera.viewMatrix)
+        .renderModel(gTestModel.preRender(),false);
 
 
     mDebug.render(gCamera);

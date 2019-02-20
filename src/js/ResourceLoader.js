@@ -43,7 +43,6 @@ export default class ResourceLoader {
     static onDownloadSuccess(doYFlip = false) {
         if(this instanceof Image) {
             let data = this.queueData;
-            console.log(this);
             ResourceLoader.gl.fLoadTexture(data.name,this,doYFlip);
         }
         ResourceLoader.loadNextItem();

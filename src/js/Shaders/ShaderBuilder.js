@@ -109,7 +109,7 @@ export default class ShaderBuilder {
             let texSlot;
             for (let i = 0; i < this.mTextureList.length; i++) {
                 texSlot = this.gl["TEXTURE" + i];
-                this.gl.activate(texSlot);
+                this.gl.activeTexture(texSlot);
                 this.gl.bindTexture(this.gl.TEXTURE_2D, this.mTextureList[i].tex);
                 this.gl.uniform1i(this.mTextureList[i].loc, i);
             }
