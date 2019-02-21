@@ -53,13 +53,13 @@ export default class Camera {
         if (this.mode === Camera.MODE_FREE) {
             this.transform.matView.reset()
                 .vtranslate(this.transform.position)
-                .vrotateX(this.transform.rotation.x * Transform.deg2Rad)
-                .vrotateY(this.transform.rotation.y * Transform.deg2Rad);
+                .vrotateY(this.transform.rotation.y * Transform.deg2Rad)
+                .vrotateX(this.transform.rotation.x * Transform.deg2Rad);
 
         } else {
             this.transform.matView.reset()
-                .vrotateX(this.transform.rotation.x * Transform.deg2Rad)
                 .vrotateY(this.transform.rotation.y * Transform.deg2Rad)
+                .vrotateX(this.transform.rotation.x * Transform.deg2Rad)
                 .vtranslate(this.transform.position);
 
         }

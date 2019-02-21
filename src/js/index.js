@@ -31,6 +31,9 @@ import fMaskShader from '../shaders/Mask/fMaskShader.glsl';
 /* a bit of utility */
 import Utils from './Utils/Utils';
 
+/* Terrain */
+import Terrain from './Terrain/Terrain';
+
 /* Objects */
 import Primitives from './Primitives';
 import Entity from './Entity';
@@ -43,6 +46,7 @@ let gl, gRLoop;
 let gGridShader, gGridModel;
 let gSkyboxShader, gSkyboxModel;
 let gCamera, gCameraControl;
+let gTerrain;
 let gTestModel, gTestShader;
 let gF16, gF16Shader;
 let mDebug;
@@ -89,7 +93,7 @@ function onReady() {
     // gTestShader = new TestShader(gl, gCamera.projectionMatrix)
     //     .setTexture(gl.mTextureCache["F16"]);
 
-    gTestShader = new ShaderBuilder(gl, vMaskShader, fMaskShader)
+    gTestShader = new ShaderBuilder(gl, vShader, fShader)
         .prepareUniforms("uPMatrix", "mat4", "uMVMatrix", "mat4", "uCameraMatrix", "mat4", "uColors", "3fv")
         .prepareTextures("uMask_A", "mask_a", "uMask_B", "mask_b")
         .setUniforms("uPMatrix", gCamera.projectionMatrix,
@@ -99,6 +103,8 @@ function onReady() {
             ));
     gTestModel = Primitives.Cube.createBasicCube(gl)
         .setPosition(0, 0, 0);
+
+    gTerrain = Terrain.createModel(gl);
 
     gRLoop.start();
 }
@@ -115,11 +121,11 @@ function onRender(dt) {
     gSkyboxShader.noCulling = true;
 
 
-    gSkyboxShader.activate().preRender()
-        .setCameraMatrix(gCamera.getTranslatelessMatrix())
-        .setTime(performance.now())
-        .renderModel(gSkyboxModel
-            .preRender());
+    // gSkyboxShader.activate().preRender()
+    //     .setCameraMatrix(gCamera.getTranslatelessMatrix())
+    //     .setTime(performance.now())
+    //     .renderModel(gSkyboxModel
+    //         .preRender());
 
     /* Grid
     gGridShader.activate()
@@ -136,7 +142,7 @@ function onRender(dt) {
     // gTestModel.transform.position.set(-x, 0, -z);
 
     gTestShader.preRender("uCameraMatrix", gCamera.viewMatrix)
-        .renderModel(gTestModel.preRender(),false);
+        .renderModel(gTerrain.preRender(),false);
 
 
     mDebug.render(gCamera);

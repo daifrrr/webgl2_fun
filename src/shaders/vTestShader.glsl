@@ -7,20 +7,10 @@ uniform mat4 uPMatrix;
 uniform mat4 uMVMatrix;
 uniform mat4 uCameraMatrix;
 
-uniform mat3 uNormalMatrix;
-uniform vec3 uCameraPosition;
-
-out vec3 vPos;
-out vec3 vNorm;
-out vec3 vCamPos;
 out highp vec2 vUV;
 
 void main() {
-    vec4 pos = uMVMatrix * vec4(a_position.xyz, 1.0);
-    vPos = pos.xyz;
-    vNorm = uNormalMatrix * a_norm;
+    gl_PointSize = 8.0;
     vUV = a_uv;
-    vCamPos = (uCameraMatrix * vec4(uCameraPosition, 1.0)).xyz;
-
-    gl_Position = uPMatrix * uCameraMatrix * pos;
+    gl_Position = uPMatrix * uCameraMatrix * uMVMatrix * vec4(a_position.xyz, 1.0);
 }
