@@ -1,12 +1,7 @@
 /* CSS Import - canvas attributes */
 import '../css/style.css';
 
-/* Image Import */
-import f16texture from '../resources/f16-texture.bmp';
-import mask_square from '../resources/mask_square.png';
-import mask_conercircles from '../resources/mask_cornercircles.png';
-
-/* important program imports */
+/* Program Imports */
 import GLInstance from './gl';
 import Shader from './Shaders/Shader';
 import RenderLoop from './RenderLoop';
@@ -18,7 +13,11 @@ import DebugHelper from './Utils/Helpers/DebugHelper';
 import Camera from './Camera/Camera';
 import CameraController from './Camera/CameraController';
 
-/* all around the shaders */
+/* a bit of utility */
+import Utils from './Utils/Utils';
+import ResourceLoader from "./ResourceLoader";
+
+/* Shader Imports */
 import GridShader from './GridShader';
 import SkyboxShader from './SkyboxShader';
 import vShader from '../shaders/vTestShader.glsl';
@@ -28,9 +27,6 @@ import fF16Shader from '../shaders/F16/f.glsl';
 import vMaskShader from '../shaders/Mask/vMaskShader.glsl';
 import fMaskShader from '../shaders/Mask/fMaskShader.glsl';
 
-/* a bit of utility */
-import Utils from './Utils/Utils';
-
 /* Terrain */
 import Terrain from './Terrain/Terrain';
 
@@ -39,8 +35,12 @@ import Primitives from './Primitives';
 import Entity from './Entity';
 import ShaderBuilder from "./Shaders/ShaderBuilder";
 
-import ResourceLoader from "./ResourceLoader";
+/* Image Imports */
+import f16texture from '../resources/f16-texture.bmp';
+import mask_square from '../resources/mask_square.png';
+import mask_conercircles from '../resources/mask_cornercircles.png';
 
+/* ***** Imports End ***** */
 
 let gl, gRLoop;
 let gGridShader, gGridModel;
