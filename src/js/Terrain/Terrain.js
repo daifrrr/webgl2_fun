@@ -20,11 +20,6 @@ export default class Terrain {
             uvxInc = 1 / (cLen - 1),
             uvyInc = 1 / (rLen - 1);
 
-        noise.seed(1);
-        var h = 0,
-            freq = 13,
-            maxHeight = -3;
-
 
         for (let i = 0; i < vLen; i++) {
             cRow = Math.floor(i / cLen);
