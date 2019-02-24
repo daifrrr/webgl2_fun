@@ -13,8 +13,8 @@ out vec4 outColor;
 
 
 void main() {
-//    vec4 colorBase = vec4(1.0, 0.2, 0.2, 1.0);
-    vec4 colorBase = texture(uMainTex, vUV);
+    vec4 colorBase = vec4(1.0, 1.0, 0.2, 1.0);
+//    vec4 colorBase = texture(uMainTex, vUV);
     vec3 colorLight = vec3(1.0, 1.0, 1.0);
     // ambient
     float ambientStrength = 0.5;

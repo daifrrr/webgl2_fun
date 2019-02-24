@@ -51,7 +51,7 @@ let gl, gRLoop;
 let gGridShader, gGridModel;
 let gSkyboxShader, gSkyboxModel;
 let gCamera, gCameraControl;
-let gTerrain;
+let gTerrain, gTerrainShader;
 let gTestModel, gTestShader;
 let gF16, gF16Shader;
 let mDebug;
@@ -89,7 +89,7 @@ function onReady() {
 
     gTerrain = Terrain.createModel(gl, true);
 
-    gTestShader = new ShaderBuilder(gl, vTerrainShader, fTerrainShader)
+    gTerrainShader = new ShaderBuilder(gl, vTerrainShader, fTerrainShader)
         .prepareUniforms(
             "uPMatrix", "mat4",
             "uMVMatrix", "mat4",
@@ -100,12 +100,27 @@ function onReady() {
         .setUniforms(
             "uPMatrix", gCamera.projectionMatrix
         );
+
+    gTestShader = new ShaderBuilder(gl, vLightShader, fLightShader)
+        .prepareUniforms(
+            "uPMatrix", "mat4",
+            "uMVMatrix", "mat4",
+            "uCameraMatrix", "mat4",
+            "uNormalMatrix", "mat3",
+            "uCameraPosition", "3fv",
+            "uLightPosition", "3fv")
+        .setUniforms(
+            "uPMatrix", gCamera.projectionMatrix,
+        );
+
+
+
     gTestModel = Primitives.Cube.createBasicCube(gl)
         .setPosition(0, 1, 0);
 
-    mDebug = new DebugHelper.Line(gl)
+    mDebug = new DebugHelper.Dot(gl)
         .addColor("#00FF00")
-        .addMeshNormal(0, 0.3, gTerrain.mesh)
+        .addPoint(0,2,0,0)
         .finalize();
 
     gRLoop.start();
@@ -114,62 +129,29 @@ function onReady() {
 function onRender(dt) {
     gl.fClear();
     gCamera.updateViewMatrix();
-    gTestShader.preRender("uCameraMatrix", gCamera.viewMatrix)
-        .renderModel(gTerrain.preRender(), false)
-        .renderModel(gTestModel
-            .addRotation(Math.PI * dt, 0, 0)
-            .preRender());
+
+    gTerrainShader.preRender("uCameraMatrix", gCamera.viewMatrix)
+        .renderModel(gTerrain.preRender(), false);
+
+    gTestShader.activate().preRender("uCameraMatrix", gCamera.viewMatrix)
+        .setUniforms(
+            "uLightPosition", new Float32Array([2.0, 3.0, 0])
+        )
+        .renderModel(gTestModel.preRender());
 
 
 
-
-    //mDebug.render(gCamera);
+    mDebug.render(gCamera);
 }
 
-class TestShader extends Shader {
-    constructor(gl, pMatrix) {
+class TestShader extends ShaderBuilder {
+    constructor(gl) {
         super(gl, vShader, fShader);
-
-        this.uniformLoc.lightPosition = gl.getUniformLocation(this.program, "uLightPosition");
-        this.uniformLoc.cameraPosition = gl.getUniformLocation(this.program, "uCameraPosition");
-        this.uniformLoc.matNormal = gl.getUniformLocation(this.program, "uNormalMatrix");
-
-        this.setPerspective(pMatrix);
-        this.mainTexture = -1;
-        gl.useProgram(null);
     }
 
-    setTime(t) {
-        this.gl.uniform1f(this.uniformLoc.time, t);
-        return this;
-    }
-
-    setLightPosition(obj) {
-        this.gl.uniform3fv(this.uniformLoc.lightPosition, new Float32Array(obj.transform.position.getArray()));
-        return this;
-    }
-
-    setCameraPosition(obj) {
-        this.gl.uniform3fv(this.uniformLoc.cameraPosition, new Float32Array(obj.transform.position.getArray()));
-        return this;
-    }
-
-    setTexture(texID) {
-        this.mainTexture = texID;
-        return this;
-    }
-
-    preRender() {
-        this.gl.activeTexture(this.gl.TEXTURE0);
-        this.gl.bindTexture(this.gl.TEXTURE_2D, this.mainTexture);
-        this.gl.uniform1i(this.uniformLoc.mainTexture, 0);
-
-        return this;
-    }
-
-    renderModel(model) {
+    renderModel(model, doShaderClose) {
         this.gl.uniformMatrix3fv(this.uniformLoc.matNormal, false, model.transform.getNormalMatrix());
-        super.renderModel(model);
+        super.renderModel(model, doShaderClose);
         return this;
     }
 }
