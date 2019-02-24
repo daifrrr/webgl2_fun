@@ -1,5 +1,5 @@
-#version 120
-
-void main() {
-
-}
+#version 300 es
+precision mediump float;
+in vec4 color;
+out vec4 finalColor;
+void main(void){ finalColor = color; }

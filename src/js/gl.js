@@ -18,7 +18,7 @@ export default function GLInstance(canvasID) {
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); //Setup Default Alpha Blending
 
 
-    gl.clearColor(0, 0, 0, 1.0);
+    gl.clearColor(0.75, 0.75, 0.75,1.0);
 
     gl.fClear = function () {
         this.clear(this.COLOR_BUFFER_BIT | this.DEPTH_BUFFER_BIT);
@@ -46,13 +46,13 @@ export default function GLInstance(canvasID) {
         //Set up vertices
         if (aryVert !== undefined && aryVert != null) {
             rtn.bufVertices = this.createBuffer();													//Create buffer...
-            rtn.vertexComponentLen = vertLength || 3;																//How many floats make up a vertex
-            rtn.vertexCount = aryVert.length / rtn.vertexComponentLen;								//How many vertices in the array
+            rtn.vertexComponentLength = vertLength || 3;																//How many floats make up a vertex
+            rtn.vertexCount = aryVert.length / rtn.vertexComponentLength;								//How many vertices in the array
 
             this.bindBuffer(this.ARRAY_BUFFER, rtn.bufVertices);
             this.bufferData(this.ARRAY_BUFFER, new Float32Array(aryVert), this.STATIC_DRAW);		//then push array into it.
             this.enableVertexAttribArray(cfg.ATTR_POSITION_LOC);										//Enable Attribute location
-            this.vertexAttribPointer(cfg.ATTR_POSITION_LOC, rtn.vertexComponentLen, this.FLOAT, false, 0, 0);						//Put buffer at location of the vao
+            this.vertexAttribPointer(cfg.ATTR_POSITION_LOC, rtn.vertexComponentLength, this.FLOAT, false, 0, 0);						//Put buffer at location of the vao
         }
 
         //.......................................................

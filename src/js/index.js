@@ -24,6 +24,10 @@ import vShader from '../shaders/vTestShader.glsl';
 import fShader from '../shaders/fTestShader.glsl';
 import vF16Shader from '../shaders/F16/v.glsl';
 import fF16Shader from '../shaders/F16/f.glsl';
+import vLightShader from '../shaders/Lighting/vLightShader.glsl';
+import fLightShader from '../shaders/Lighting/fLightShader.glsl';
+import vTerrainShader from '../shaders/Terrain/vTerrainShader.glsl';
+import fTerrainShader from '../shaders/Terrain/fTerrainShader.glsl';
 import vMaskShader from '../shaders/Mask/vMaskShader.glsl';
 import fMaskShader from '../shaders/Mask/fMaskShader.glsl';
 
@@ -39,6 +43,7 @@ import ShaderBuilder from "./Shaders/ShaderBuilder";
 import f16texture from '../resources/f16-texture.bmp';
 import mask_square from '../resources/mask_square.png';
 import mask_conercircles from '../resources/mask_cornercircles.png';
+import muddImg from '../resources/dreck.png';
 
 /* ***** Imports End ***** */
 
@@ -69,83 +74,56 @@ window.addEventListener('load', function () {
         document.getElementById("cube_front"),
     ];
     gl.fLoadCubeTexture("Skybox", skyboxImages);
-    // gl.fLoadTexture("F16", document.getElementById("f16-tex"), true);
 
-
-    // gGridShader = new GridShader(gl, gCamera.projectionMatrix);
-    // gGridModal = Primitives.GridAxis.createModal(gl, true);
-
-    gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
-        gl.mTextureCache["Skybox"]);
-    gSkyboxModel = Primitives.Cube.createModal(gl, 25, 25, 25, 0, 0, 0);
-
-    mDebug = new DebugHelper.Dot(gl, 10)
-        .addColor('#F000F0')
-        .addPoint(0, 0, 0, 0)
-        .finalize();
     ResourceLoader.setup(gl, onReady).loadTexture(
+        "mudd", muddImg,
         "mask_a", mask_square,
         "mask_b", mask_conercircles).start();
 });
 
 function onReady() {
 
-    // gTestShader = new TestShader(gl, gCamera.projectionMatrix)
-    //     .setTexture(gl.mTextureCache["F16"]);
+    gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
+        gl.mTextureCache["Skybox"]);
+    gSkyboxModel = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
 
-    gTestShader = new ShaderBuilder(gl, vShader, fShader)
-        .prepareUniforms("uPMatrix", "mat4", "uMVMatrix", "mat4", "uCameraMatrix", "mat4", "uColors", "3fv")
-        .prepareTextures("uMask_A", "mask_a", "uMask_B", "mask_b")
-        .setUniforms("uPMatrix", gCamera.projectionMatrix,
-            "uColors", Utils.rgbHexToFloat(
-                "#880000",
-                "#ff0c0c"
-            ));
+    gTerrain = Terrain.createModel(gl, true);
+
+    gTestShader = new ShaderBuilder(gl, vTerrainShader, fTerrainShader)
+        .prepareUniforms(
+            "uPMatrix", "mat4",
+            "uMVMatrix", "mat4",
+            "uCameraMatrix", "mat4",
+            "uNormalMatrix", "mat3",
+            "uCameraPosition", "3fv")
+        .prepareTextures("uTex", "mudd")
+        .setUniforms(
+            "uPMatrix", gCamera.projectionMatrix
+        );
     gTestModel = Primitives.Cube.createBasicCube(gl)
-        .setPosition(0, 0, 0);
+        .setPosition(0, 1, 0);
 
-    gTerrain = Terrain.createModel(gl);
+    mDebug = new DebugHelper.Line(gl)
+        .addColor("#00FF00")
+        .addMeshNormal(0, 0.3, gTerrain.mesh)
+        .finalize();
 
     gRLoop.start();
 }
 
-let radius = 1.5,
-    angle = 0,
-    angleInc = 1,
-    yPos = 0,
-    yPosInc = 0.2;
-
 function onRender(dt) {
-    gCamera.updateViewMatrix();
     gl.fClear();
-    gSkyboxShader.noCulling = true;
-
-
-    // gSkyboxShader.activate().preRender()
-    //     .setCameraMatrix(gCamera.getTranslatelessMatrix())
-    //     .setTime(performance.now())
-    //     .renderModel(gSkyboxModel
-    //         .preRender());
-
-    /* Grid
-    gGridShader.activate()
-          .setCameraMatrix(gCamera.viewMatrix)
-          .renderModel(gGridModal.preRender());
-    */
-
-    angle += angleInc * dt;
-    yPos += yPosInc * dt;
-
-    let Dx = radius * Math.cos(angle),
-        Dz = radius * Math.sin(angle);
-    mDebug.transform.position.set(Dx, 0, Dz);
-    // gTestModel.transform.position.set(-x, 0, -z);
-
+    gCamera.updateViewMatrix();
     gTestShader.preRender("uCameraMatrix", gCamera.viewMatrix)
-        .renderModel(gTerrain.preRender(),false);
+        .renderModel(gTerrain.preRender(), false)
+        .renderModel(gTestModel
+            .addRotation(Math.PI * dt, 0, 0)
+            .preRender());
 
 
-    mDebug.render(gCamera);
+
+
+    //mDebug.render(gCamera);
 }
 
 class TestShader extends Shader {

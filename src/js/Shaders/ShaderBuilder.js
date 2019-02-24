@@ -73,6 +73,9 @@ export default class ShaderBuilder {
                 case "4fv":
                     this.gl.uniform4fv(this.mUniformList[name].loc, new Float32Array(arguments[i + 1]));
                     break;
+                case "mat3":
+                    this.gl.uniformMatrix3fv(this.mUniformList[name].loc, false, new Float32Array(arguments[i+1]));
+                    break;
                 case "mat4":
                     this.gl.uniformMatrix4fv(this.mUniformList[name].loc, false, new Float32Array(arguments[i + 1]));
                     break;
