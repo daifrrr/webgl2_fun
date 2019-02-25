@@ -29,6 +29,21 @@ export default class ShaderBuilder {
         return this;
     }
 
+    prepateUniformBlock(ubo, blockIndex) {
+        let index = 0;
+        for(let i = 0; i < arguments.length; i+=2) {
+            //index = this.gl.getUniformBlockIndex(this.program, arguments[i].blockName);
+            //console.log("Unform Block Index ", index, ubo.blockName,ubo.blockPoint);
+            this.gl.uniformBlockBinding(this.program, arguments[i+1], arguments[i].blockPoint)
+
+            // console.log(this.gl.getActiveUniformBlockParameter(this.program, 0, this.gl.UNIFORM_BLOCK_DATA_SIZE));
+            // console.log(this.gl.getActiveUniformBlockParameter(this.program, 0, this.gl.UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES));
+            // console.log(this.gl.getActiveUniformBlockParameter(this.program, 0, this.gl.UNIFORM_BLOCK_ACTIVE_UNIFORMS));
+            // console.log(this.gl.getActiveUniformBlockParameter(this.program, 0, this.gl.UNIFORM_BLOCK_BINDING));
+        }
+        return this;
+    }
+
     prepareTextures() {
         if (arguments.length % 2 !== 0) {
             console.error("preTextures need arguments to be in pairs");
