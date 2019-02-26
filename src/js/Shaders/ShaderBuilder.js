@@ -1,4 +1,5 @@
 import ShaderUtil from "./ShaderUtil";
+import UBO from './UBO';
 
 export default class ShaderBuilder {
     constructor(gl, vertexShader, fragmentShader) {
