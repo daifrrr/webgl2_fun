@@ -95,7 +95,7 @@ export default function GLInstance(canvasID) {
 
     gl.fLoadTexture = function (name, img, doYFlip = false) {
         let tex = this.createTexture();
-        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 1);
+        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, true);
         this.bindTexture(this.TEXTURE_2D, tex);
         this.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 
@@ -112,7 +112,7 @@ export default function GLInstance(canvasID) {
         //this.bindTexture(this.TEXTURE_2D,null);
         this.mTextureCache[name] = tex;
 
-        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, 0);
+        if (doYFlip) this.pixelStorei(this.UNPACK_FLIP_Y_WEBGL, false);
 
         return tex;
     };

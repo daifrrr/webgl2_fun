@@ -20,7 +20,8 @@ void main() {
     vPos = pos.xyz;
     vNorm = uNormalMatrix * a_norm;
     vUV = a_uv;
-    vCamPos = (uCameraMatrix * vec4(uCameraPosition, 1.0)).xyz;
+    vCamPos = (inverse(uCameraMatrix) * vec4(uCameraPosition,1.0)).xyz;
+    //vCamPos = (uCameraMatrix * vec4(uCameraPosition, 1.0)).xyz;
 
     gl_Position = uPMatrix * uCameraMatrix * pos;
 }

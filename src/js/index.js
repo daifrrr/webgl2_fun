@@ -41,6 +41,7 @@ import ShaderBuilder from "./Shaders/ShaderBuilder";
 
 /* Image Imports */
 import f16texture from '../resources/f16-texture.bmp';
+import cubeUV from '../resources/uv_grid_lrg.jpg';
 import mask_square from '../resources/mask_square.png';
 import mask_conercircles from '../resources/mask_cornercircles.png';
 import muddImg from '../resources/dreck.png';
@@ -74,7 +75,7 @@ window.addEventListener('load', function () {
         document.getElementById("cube_front"),
     ];
     gl.fLoadCubeTexture("Skybox", skyboxImages);
-
+    gl.fLoadTexture("cubeTex", document.getElementById('tex01Img'));
     ResourceLoader.setup(gl, onReady).loadTexture(
         "mudd", muddImg,
         "mask_a", mask_square,
@@ -83,9 +84,9 @@ window.addEventListener('load', function () {
 
 function onReady() {
 
-    gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
-        gl.mTextureCache["Skybox"]);
-    gSkyboxModel = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
+    // gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
+    //     gl.mTextureCache["Skybox"]);
+    // gSkyboxModel = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
 
     gTerrain = Terrain.createModel(gl, true);
 
@@ -109,6 +110,7 @@ function onReady() {
             "uNormalMatrix", "mat3",
             "uCameraPosition", "3fv",
             "uLightPosition", "3fv")
+        .prepareTextures("uMainTex", "cubeTex")
         .setUniforms(
             "uPMatrix", gCamera.projectionMatrix,
         );
@@ -119,12 +121,18 @@ function onReady() {
         .setPosition(0, 1, 0);
 
     mDebug = new DebugHelper.Dot(gl)
-        .addColor("#00FF00")
-        .addPoint(0,2,0,0)
+        .addColor("#FFAAA0")
+        .addPoint(0,0,0,0)
         .finalize();
 
     gRLoop.start();
 }
+
+let radius = 1.2,
+    angle = 0,
+    angleInc = 0.75,
+    yPos = 0,
+    yPosInc = 0.2;
 
 function onRender(dt) {
     gl.fClear();
@@ -133,11 +141,21 @@ function onRender(dt) {
     gTerrainShader.preRender("uCameraMatrix", gCamera.viewMatrix)
         .renderModel(gTerrain.preRender(), false);
 
-    gTestShader.activate().preRender("uCameraMatrix", gCamera.viewMatrix)
+    gTestShader.preRender("uCameraMatrix", gCamera.viewMatrix)
         .setUniforms(
-            "uLightPosition", new Float32Array([2.0, 3.0, 0])
+            "uLightPosition", new Float32Array(mDebug.transform.position.getArray()),
+            "uCameraPosition", gCamera.transform.position.getArray(),
+            "uNormalMatrix", gTestModel.transform.getNormalMatrix()
         )
         .renderModel(gTestModel.preRender());
+
+    angle += angleInc * dt;
+    yPos += yPosInc * dt;
+
+    let x = radius * Math.cos(angle),
+        z = radius * Math.sin(angle),
+        y = 1.0;
+    mDebug.transform.position.set(x,y,z);
 
 
 
