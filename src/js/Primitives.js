@@ -5,15 +5,15 @@ let Primitives = {};
 export default Primitives;
 
 Primitives.Cube = class {
-    static createModal(gl, w, h, d, x, y, z) {
-        return new Model(Primitives.Cube.createMesh(gl, w, h, d, x, y, z));
+    static createModal(gl, w, h, d, x, y, z, keepRawData) {
+        return new Model(Primitives.Cube.createMesh(gl, w, h, d, x, y, z, keepRawData));
     }
 
-    static createBasicCube(gl) {
-        return new Model(Primitives.Cube.createMesh(gl, 1, 1, 1, 0, 0, 0));
+    static createBasicCube(gl, keepRawData) {
+        return new Model(Primitives.Cube.createMesh(gl, 1, 1, 1, 0, 0, 0, keepRawData));
     }
 
-    static createMesh(gl, width, height, depth, x, y, z) {
+    static createMesh(gl, width, height, depth, x, y, z, keepRawData = false) {
         let w = width * 0.5, h = height * 0.5, d = depth * 0.5;
         let x0 = x - w, x1 = x + w, y0 = y - h, y1 = y + h, z0 = z - d, z1 = z + d;
 
@@ -67,6 +67,11 @@ Primitives.Cube = class {
         let mesh = gl.fCreateMeshVAO("Cube", aIndices, aVertices, aNormals, aUVs, 4);
         mesh.noCulling = true;
         mesh.doBlending = false;
+        if(keepRawData){
+            mesh.aVert = aVertices;
+            mesh.aNorm = aNormals;
+            mesh.aIndex = aIndices;
+        }
         return mesh;
     }
 };
@@ -96,118 +101,6 @@ Primitives.Quad = class {
         let mesh = gl.fCreateMeshVAO("Quad", aIndex, aVertices, null, aUV);
         mesh.noCulling = false;
         mesh.doBlending = false;
-        return mesh;
-    }
-};
-
-
-Primitives.GridAxis = class {
-    static createModal(gl, incAxis) {
-        return new Model(Primitives.GridAxis.createMesh(gl, incAxis));
-    }
-
-    static createMesh(gl, incAxis) {
-        let vertices = [],
-            size = 2,
-            div = 10.0,
-            step = size / div,
-            half = size / 2;
-
-        let p;
-        for (let i = 0; i <= div; i++) {
-            p = -half + (i * step);
-            vertices.push(p);
-            vertices.push(0);
-            vertices.push(half);
-            vertices.push(0);
-
-            vertices.push(p);
-            vertices.push(0);
-            vertices.push(-half);
-            vertices.push(0);
-
-            p = half - (i * step);
-            vertices.push(-half);
-            vertices.push(0);
-            vertices.push(p);
-            vertices.push(0);
-
-            vertices.push(half);
-            vertices.push(0);
-            vertices.push(p);
-            vertices.push(0);
-        }
-        if (incAxis) {
-            //x axis
-            vertices.push(-1.1);	//x1
-            vertices.push(0);		//y1
-            vertices.push(0);		//z1
-            vertices.push(1);		//c2
-
-            vertices.push(1.1);	//x2
-            vertices.push(0);		//y2
-            vertices.push(0);		//z2
-            vertices.push(1);		//c2
-
-            //y axis
-            vertices.push(0);//x1
-            vertices.push(-1.1);	//y1
-            vertices.push(0);		//z1
-            vertices.push(2);		//c2
-
-            vertices.push(0);		//x2
-            vertices.push(1.1);	//y2
-            vertices.push(0);		//z2
-            vertices.push(2);		//c2
-
-            //z axis
-            vertices.push(0);		//x1
-            vertices.push(0);		//y1
-            vertices.push(-1.1);	//z1
-            vertices.push(3);		//c2
-
-            vertices.push(0);		//x2
-            vertices.push(0);		//y2
-            vertices.push(1.1);	//z2
-            vertices.push(3);		//c2
-        }
-
-        let attrColorLocation = 4,
-            strideLen,
-            mesh = {drawMode: gl.LINES, vao: gl.createVertexArray()};
-
-        mesh.vertexComponentLen = 4;
-        mesh.vertexCount = vertices.length / mesh.vertexComponentLen;
-        strideLen = Float32Array.BYTES_PER_ELEMENT * mesh.vertexComponentLen;
-
-        mesh.bufVertices = gl.createBuffer();
-        gl.bindVertexArray(mesh.vao);
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.bufVertices);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        gl.enableVertexAttribArray(cfg.ATTR_POSITION_LOC);
-        gl.enableVertexAttribArray(attrColorLocation);
-
-        gl.vertexAttribPointer(
-            cfg.ATTR_POSITION_LOC,
-            3,
-            gl.FLOAT,
-            false,
-            strideLen,
-            0
-        );
-
-        gl.vertexAttribPointer(
-            attrColorLocation,
-            1,
-            gl.FLOAT,
-            false,
-            strideLen,
-            Float32Array.BYTES_PER_ELEMENT * 3
-        );
-
-        gl.bindVertexArray(null);
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        gl.mMeshCache["grid"] = mesh;
         return mesh;
     }
 };

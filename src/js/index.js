@@ -8,6 +8,7 @@ import RenderLoop from './RenderLoop';
 
 /* import some debug utility classes */
 import DebugHelper from './Utils/Helpers/DebugHelper';
+import GridFloor from "./Utils/Helpers/GridFloor";
 
 /* Camera and Controlls */
 import Camera from './Camera/Camera';
@@ -36,10 +37,12 @@ import ShaderBuilder from "./Shaders/ShaderBuilder";
 import mask_square from '../resources/mask_square.png';
 import mask_conercircles from '../resources/mask_cornercircles.png';
 import muddImg from '../resources/dreck.png';
+import GridAxisShader from "./GridShader";
 
 /* ***** Imports End ***** */
 
 let gl, gRLoop;
+let gGrid;
 let gSkyboxShader, gSkyboxModel;
 let gCamera, gCameraControl;
 let gTerrain, gTerrainShader;
@@ -77,39 +80,57 @@ function onReady() {
         gl.mTextureCache["Skybox"]);
     gSkyboxModel = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
 
-    gTerrain = Terrain.createModel(gl, true);
+    gGrid = new GridFloor(gl);
 
-    gTerrainShader = new ShaderBuilder(gl, vTerrainShader, fTerrainShader)
+
+
+    // gTerrain = Terrain.createModel(gl, true);
+    //
+    // gTerrainShader = new ShaderBuilder(gl, vTerrainShader, fTerrainShader)
+    //     .prepareUniforms(
+    //         "uPMatrix", "mat4",
+    //         "uMVMatrix", "mat4",
+    //         "uCameraMatrix", "mat4",
+    //         "uNormalMatrix", "mat3",
+    //         "uCameraPosition", "3fv")
+    //     .prepareTextures("uTex", "mudd")
+    //     .setUniforms(
+    //         "uPMatrix", gCamera.projectionMatrix
+    //     );
+
+    gTestModel = Primitives.Cube.createBasicCube(gl, true)
+        .setPosition(0, 0, 0);
+
+    gTestShader = new ShaderBuilder(gl, vShader, fShader)
         .prepareUniforms(
             "uPMatrix", "mat4",
             "uMVMatrix", "mat4",
-            "uCameraMatrix", "mat4",
-            "uNormalMatrix", "mat3",
-            "uCameraPosition", "3fv")
-        .prepareTextures("uTex", "mudd")
+            "uCameraMatrix", "mat4",)
+            // "uNormalMatrix", "mat3",
+            // "uCameraPosition", "3fv")
         .setUniforms(
             "uPMatrix", gCamera.projectionMatrix
         );
 
-    gTestModel = Primitives.Cube.createBasicCube(gl)
-        .setPosition(0, 1, 0);
 
     mDebug = new DebugHelper.Dot(gl)
         .addColor("#00FF00")
-        .addPoint(0,2,0,0)
+        .addPoint(0,0,0,0)
         .finalize();
-
     gRLoop.start();
 }
 
 function onRender(dt) {
     gl.fClear();
     gCamera.updateViewMatrix();
+    // gTerrainShader.preRender("uCameraMatrix", gCamera.viewMatrix)
+    //     .renderModel(gTerrain.preRender(), false);
 
-    gTerrainShader.preRender("uCameraMatrix", gCamera.viewMatrix)
-        .renderModel(gTerrain.preRender(), false);
-
-    mDebug.render(gCamera);
+    gTestShader.preRender(
+            "uCameraMatrix", gCamera.viewMatrix
+        ).renderModel(gTestModel.preRender());
+    gGrid.render(gCamera);
+    //mDebug.render(gCamera);
 }
 
 class TestShader extends ShaderBuilder {
