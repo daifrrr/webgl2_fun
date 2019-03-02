@@ -30,7 +30,7 @@ export default class ShaderBuilder {
         return this;
     }
 
-    prepateUniformBlock(ubo, blockIndex) {
+    prepareUniformBlocks(ubo, blockIndex) {
         let index = 0;
         for(let i = 0; i < arguments.length; i+=2) {
             //index = this.gl.getUniformBlockIndex(this.program, arguments[i].blockName);
@@ -94,6 +94,9 @@ export default class ShaderBuilder {
                     break;
                 case "mat4":
                     this.gl.uniformMatrix4fv(this.mUniformList[name].loc, false, new Float32Array(arguments[i + 1]));
+                    break;
+                case "f":
+                    this.gl.uniform1f(this.mUniformList[name].loc, arguments[i + 1]);
                     break;
                 default:
                     console.error("unknown uniform type for " + name);

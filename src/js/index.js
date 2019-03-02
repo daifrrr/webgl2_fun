@@ -37,8 +37,8 @@ import ShaderBuilder from "./Shaders/ShaderBuilder";
 import mask_square from '../resources/mask_square.png';
 import mask_conercircles from '../resources/mask_cornercircles.png';
 import muddImg from '../resources/dreck.png';
-import GridAxisShader from "./GridShader";
-
+import cubeTex from '../resources/uv_grid_lrg.jpg'
+import UBO from "./Shaders/UBO";
 /* ***** Imports End ***** */
 
 let gl, gRLoop;
@@ -58,6 +58,22 @@ window.addEventListener('load', function () {
 
     gRLoop = new RenderLoop(onRender, 60);
 
+    UBO.create(gl, "MatTransform",1, [
+        {name:"matProjection", type:"mat4"},
+        {name:"matCameraView", type:"mat4"}
+
+
+        // {name:"float01",type:"f"},
+        // {name:"float02",type:"f"},
+        // {name:"float03",type:"f"},
+        // {name:"projectionMat",type:"mat4"},
+        // {name:"float04",type:"f"},
+        // {name:"float05",type:"f"},
+        // {name:"vec3",type:"vec3"},
+        // {name:"float06",type:"f"},
+    ]);
+    UBO.Cache["MatTransform"].update("matProjection", gCamera.projectionMatrix);
+
     let skyboxImages = [
         document.getElementById("cube_right"),
         document.getElementById("cube_left"),
@@ -69,6 +85,7 @@ window.addEventListener('load', function () {
     gl.fLoadCubeTexture("Skybox", skyboxImages);
 
     ResourceLoader.setup(gl, onReady).loadTexture(
+        "tex", cubeTex,
         "mudd", muddImg,
         "mask_a", mask_square,
         "mask_b", mask_conercircles).start();
@@ -79,10 +96,7 @@ function onReady() {
     gSkyboxShader = new SkyboxShader(gl, gCamera.projectionMatrix,
         gl.mTextureCache["Skybox"]);
     gSkyboxModel = Primitives.Cube.createModal(gl, 100, 100, 100, 0, 0, 0);
-
     gGrid = new GridFloor(gl);
-
-
 
     // gTerrain = Terrain.createModel(gl, true);
     //
@@ -103,13 +117,20 @@ function onReady() {
 
     gTestShader = new ShaderBuilder(gl, vShader, fShader)
         .prepareUniforms(
-            "uPMatrix", "mat4",
             "uMVMatrix", "mat4",
-            "uCameraMatrix", "mat4",)
-            // "uNormalMatrix", "mat3",
-            // "uCameraPosition", "3fv")
+            "uColorArray", "3fv",
+            "uTime", "f")
+        .prepareUniformBlocks(UBO.Cache["MatTransform"],0)
+        .prepareTextures("mainTexture", "tex")
         .setUniforms(
-            "uPMatrix", gCamera.projectionMatrix
+            "uColorArray", Utils.rgbHexToFloat(
+                "#FF0000",
+                "#00FF00",
+                "#0000FF",
+                "#FFFF00",
+                "#FF00FF",
+                "#00FFFF"
+            )
         );
 
 
@@ -123,12 +144,15 @@ function onReady() {
 function onRender(dt) {
     gl.fClear();
     gCamera.updateViewMatrix();
+    UBO.Cache["MatTransform"].update("matCameraView", gCamera.viewMatrix);
     // gTerrainShader.preRender("uCameraMatrix", gCamera.viewMatrix)
     //     .renderModel(gTerrain.preRender(), false);
 
     gTestShader.preRender(
-            "uCameraMatrix", gCamera.viewMatrix
-        ).renderModel(gTestModel.preRender());
+        //"uCameraMatrix", gCamera.viewMatrix,
+    )
+        .setUniforms("uTime", dt)
+        .renderModel(gTestModel.preRender());
     gGrid.render(gCamera);
     //mDebug.render(gCamera);
 }

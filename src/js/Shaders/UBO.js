@@ -40,8 +40,8 @@ export default class UBO {
 
     static create(gl, blockName, blockPoint, array) {
         let bufferSize = UBO.calculate(array);
-        UBO.cache[blockName] = new UBO(gl, blockName, blockPoint, bufferSize, array);
-        UBO.debugVisualize(UBO.cache[blockName]);
+        UBO.Cache[blockName] = new UBO(gl, blockName, blockPoint, bufferSize, array);
+        UBO.debugVisualize(UBO.Cache[blockName]);
     }
 
     static getSize(type) {
@@ -74,7 +74,7 @@ export default class UBO {
             size = 0;
 
         for (let i = 0; i < array.length; i++) {
-            if (array[i].arrayLength || array[i].arrayLength === 0) {
+            if (!array[i].arrayLength || array[i].arrayLength === 0) {
                 size = UBO.getSize(array[i].type);
             } else {
                 size = array[i].arraylength * 16;
@@ -109,25 +109,24 @@ export default class UBO {
     }
 
     static debugVisualize(ubo) {
-        let string = "",
+        let str = '',
             chunk = 0,
             tchunk = 0,
             item = null;
 
-        for (let i = 0; i < chunk; i++) {
+        for (let i = 0; i < ubo.keys.length; i++) {
             item = ubo.items[ubo.keys[i]];
             console.log(ubo.keys[i], item);
 
             chunk = item.chunkLength / 4;
             for (let j = 0; j < chunk; j++) {
-                string += ((j === 0) || (j === chunk - 1)) ? "|." + i + "." : "|...";
+                str += ((j === 0) || (j === chunk - 1)) ? '|.'+i+'.' : '|...';
                 tchunk++;
-                if (tchunk % 4 === 0) string += "| ~ ";
+                if (tchunk % 4 === 0) str += '| ~ ';
             }
         }
-
-        if (tchunk % 4 !== 0) string += "|";
-        console.log(string);
+        if (tchunk % 4 !== 0) str += "|";
+        console.log(str);
     }
 }
 

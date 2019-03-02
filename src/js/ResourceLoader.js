@@ -40,7 +40,7 @@ export default class ResourceLoader {
         }
     }
 
-    static onDownloadSuccess(doYFlip = false) {
+    static onDownloadSuccess(doYFlip) {
         if(this instanceof Image) {
             let data = this.queueData;
             ResourceLoader.gl.fLoadTexture(data.name,this,doYFlip);
