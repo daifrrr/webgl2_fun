@@ -3,7 +3,6 @@ import '../css/style.css';
 
 /* Program Imports */
 import GLInstance from './gl';
-import Shader from './Shaders/Shader';
 import RenderLoop from './RenderLoop';
 
 /* import some debug utility classes */
@@ -30,10 +29,10 @@ import Terrain from './Terrain/Terrain';
 
 /* Objects */
 import Primitives from './Primitives';
-import Entity from './Entity';
 import ShaderBuilder from "./Shaders/ShaderBuilder";
 
 /* Image Imports */
+import * as skybox from '../shaders/Skybox/SkyboxImages';
 import mask_square from '../resources/mask_square.png';
 import mask_conercircles from '../resources/mask_cornercircles.png';
 import muddImg from '../resources/dreck.png';
@@ -74,15 +73,7 @@ window.addEventListener('load', function () {
     ]);
     UBO.Cache["MatTransform"].update("matProjection", gCamera.projectionMatrix);
 
-    let skyboxImages = [
-        document.getElementById("cube_right"),
-        document.getElementById("cube_left"),
-        document.getElementById("cube_top"),
-        document.getElementById("cube_bottom"),
-        document.getElementById("cube_back"),
-        document.getElementById("cube_front"),
-    ];
-    gl.fLoadCubeTexture("Skybox", skyboxImages);
+    gl.fLoadCubeTexture(skybox.sk_images.name, skybox.sk_images.files);
 
     ResourceLoader.setup(gl, onReady).loadTexture(
         "tex", cubeTex,
